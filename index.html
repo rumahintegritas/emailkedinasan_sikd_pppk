@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Kredensial Akun Email Kedinasan dan Akun SIKD</title>
+    <title>Portal Kredensial & Helpdesk Terpadu</title>
     <style>
         :root { --primary: #1e3a8a; --primary-light: #3b82f6; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-color: #1e293b; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 100vh; }
         header { background-color: var(--primary); color: white; padding: 16px 24px; text-align: center; font-weight: bold; font-size: 1.1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .main-wrapper { display: flex; justify-content: center; align-items: center; padding: 20px; flex: 1; }
-        .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        
+        .marquee-container { background-color: #fef3c7; border-bottom: 1px solid #fde68a; overflow: hidden; white-space: nowrap; padding: 8px 0; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; font-size: 0.85rem; font-weight: 600; color: #b45309; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .main-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: 20px; flex: 1; margin-top: 10px; }
+        .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
+        .container.admin-wide { max-width: 1000px; } 
+        
         h2 { margin-top: 0; color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 6px; }
         p.subtitle { text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px; }
         .form-group { margin-bottom: 16px; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
-        input { width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
-        input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        input[type="text"], textarea { width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; font-family: inherit; }
+        input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        input[readonly] { background-color: #f1f5f9; color: #475569; cursor: not-allowed; font-weight: 600; }
         button.btn-main { width: 100%; background-color: var(--primary); color: white; border: none; padding: 11px; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 4px; }
         button.btn-main:hover { background-color: #1e40af; }
+        
         .error-msg { color: #dc2626; font-size: 0.82rem; margin-top: 10px; text-align: center; display: none; background: #fee2e2; padding: 10px; border-radius: 6px; }
-        #dashboard-section { display: none; }
+        .loading { display: none; text-align: center; font-size: 0.85rem; color: #64748b; margin-top: 10px; font-weight:bold; }
+        
+        #dashboard-section, #monitoring-section { display: none; }
+        
         .user-profile-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
         .tab-container { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
-        .tab-btn { flex: 1; padding: 10px; background: none; border: none; font-weight: 600; font-size: 0.85rem; color: #64748b; cursor: pointer; }
+        .tab-btn { flex: 1; padding: 10px 5px; background: none; border: none; font-weight: 600; font-size: 0.8rem; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; background-color: #f8fafc; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -31,309 +43,599 @@
         .credential-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; margin-top: 4px; }
         .credential-value { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #0f172a; word-break: break-all; }
         .btn-copy { background-color: #e2e8f0; color: #334155; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
-        .btn-copy:hover { background-color: #cbd5e1; }
-        .alert-box { background-color: #eff6ff; border: 1px solid #dbeafe; color: #1e40af; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 14px; }
-        .btn-logout { background-color: #64748b; width: auto; margin: 0; }
-        .loading { display: none; text-align: center; font-size: 0.85rem; color: #64748b; margin-top: 10px; }
+        .btn-logout { background-color: #64748b; color: white; width: auto; margin: 0; }
+        
+        .tiket-card { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 6px; margin-bottom: 12px; }
+        .tiket-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; color: white; margin-bottom: 8px; }
+        
+        .admin-table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 800px; }
+        table.admin-table th { background-color: #f1f5f9; padding: 10px; text-align: left; border-bottom: 2px solid #cbd5e1; color: #0f172a; }
+        table.admin-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        table.admin-table tr:hover { background-color: #f8fafc; }
+        .status-select { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; margin-bottom: 6px; background: white; font-weight:bold; }
+        .petugas-input { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; box-sizing: border-box; margin-bottom: 6px; background: #f8fafc; }
+        .balasan-input { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; box-sizing: border-box; resize: vertical; height: 60px; font-family: inherit; }
+        .btn-simpan-status { background-color: #16a34a; color: white; border: none; padding: 8px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; width: 100%; margin-top: 4px;}
+        
+        .rekap-box { background-color: #3b82f6; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 80px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .rekap-box:hover { transform: scale(1.05); }
+        .rekap-box.all-data { background-color: #1e3a8a; }
+
+        .pagination-panel { display: flex; justify-content: center; gap: 6px; margin-top: 15px; }
+        .page-btn { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; background: white; color: #1e293b; }
+        .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .page-btn:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+
         footer { text-align: center; padding: 12px; font-size: 0.75rem; color: #64748b; }
     </style>
 </head>
 <body>
 
-    <header>Portal Kredensial Akun Email Kedinasan dan Akun SIKD</header>
+    <header>Portal Kredensial & Pusat Bantuan Pegawai</header>
+
+    <div class="marquee-container">
+        <div class="marquee-text">
+            Bila terdapat kendala silahkan buat tiket pelaporan kendala yang akan ditangani secara berkala oleh tim teknis kami. Cek status tiket Anda dengan masuk menggunakan NIK.
+        </div>
+    </div>
 
     <div class="main-wrapper">
-        <div class="container">
+        <div class="container" id="mainContainer">
             
-            <!-- SECTION LOGIN -->
+            <!-- SECTION 1: LOGIN PEGAWAI & FORM KENDALA -->
             <div id="login-section">
                 <h2>Verifikasi Data Pegawai</h2>
-                <p class="subtitle">Masukkan NIP atau NO KTP Anda untuk melihat akun kedinasan.</p>
+                <p class="subtitle">Masukkan NIK Anda untuk melihat akun & status tiket.</p>
                 
                 <div class="form-group">
-                    <label for="searchInput">Nomor NIP atau NO KTP</label>
-                    <input type="text" id="searchInput" placeholder="Masukkan NIP atau No KTP...">
+                    <input type="text" id="searchInput" placeholder="Masukkan NIK Anda di sini...">
                 </div>
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
-                <!-- TOMBOL MENU BANTUAN KENDALA -->
-<div style="margin-top: 12px; text-align: center;">
-    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: underline;">Punya Kendala / Butuh Bantuan?</button>
-</div>
-
-<!-- FORMULIR PENGADUAN KENDALA (Awalnya disembunyikan) -->
-<div id="bantuanFormPanel" style="display: none; margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; text-align: left;">
-    <div style="font-size: 0.9rem; font-weight: bold; color: #1e3a8a; margin-bottom: 10px; text-align: center;">Formulir Pengaduan Kendala</div>
-    
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label style="font-size: 0.75rem;">NIP / No KTP</label>
-        <input type="text" id="kendalaNip" placeholder="Masukkan NIP/KTP..." style="padding: 8px; font-size: 0.85rem;">
-    </div>
-    
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label style="font-size: 0.75rem;">Nama Lengkap</label>
-        <input type="text" id="kendalaNama" placeholder="Masukkan Nama..." style="padding: 8px; font-size: 0.85rem;">
-    </div>
-
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label style="font-size: 0.75rem;">Nomor WhatsApp / HP</label>
-        <input type="text" id="kendalaHp" placeholder="Contoh: 08123456789" style="padding: 8px; font-size: 0.85rem;">
-    </div>
-
-    <div class="form-group" style="margin-bottom: 12px;">
-        <label style="font-size: 0.75rem;">Kendala yang Dialami</label>
-        <textarea id="kendalaPesan" placeholder="Jelaskan kendala Anda..." style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; height: 70px;"></textarea>
-    </div>
-
-    <button onclick="kirimKendalaWhatsApp()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 9px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Kirim Laporan via WhatsApp Admin</button>
-</div>
                 <button onclick="location.reload()" style="width: 100%; background-color: #64748b; color: white; border: none; padding: 9px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 8px;">Muat Ulang Halaman</button>
-<!-- TAMBAHAN TOMBOL RESET ADMIN -->
-<!-- MENU KHUSUS ADMIN DENGAN KODE PIN -->
-<div style="margin-top: 15px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
-    <span style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 6px;">Menu Khusus Admin / Bantuan</span>
-    <button onclick="cekPasswordAdmin()" style="background-color: #475569; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Buka Menu Reset Admin</button>
-    
-    <!-- Tombol Reset Asli (Disembunyikan dulu sampai PIN benar) -->
-    <div id="adminResetPanel" style="display: none; margin-top: 10px;">
-        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Reset Batas Akses NIP/KTP Ini</button>
-    </div>
-</div>
-                <div id="loadingMsg" class="loading">Sedang memverifikasi data...</div>
+                
+                <div id="loadingMsg" class="loading">Memuat data dari server...</div>
                 <div id="errorMsg" class="error-msg"></div>
+
+                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-decoration: underline;">Mengalami Kendala? Buat Tiket Bantuan</button>
+                </div>
+
+                <!-- FORMULIR PENGADUAN KENDALA -->
+                <div id="bantuanFormPanel" style="display: none; margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; text-align: left;">
+                    <div style="font-size: 1rem; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; text-align: center;">Formulir Laporan Kendala</div>
+                    
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>NIK <span style="font-size:0.7rem; color:#64748b; font-weight:normal;">(Ketik NIK lalu klik di luar kotak)</span></label>
+                        <input type="text" id="kendalaNip" placeholder="Masukkan NIK...">
+                        <div id="loadingPegawaiMsg" style="font-size:0.75rem; color:#2563eb; display:none; margin-top:4px;">Mencari data pegawai...</div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="kendalaNama" placeholder="Otomatis terisi dari server..." readonly>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Unit Kerja Penugasan</label>
+                        <input type="text" id="kendalaUnitKerja" placeholder="Otomatis terisi dari server..." readonly>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Nomor HP / WA</label>
+                        <input type="text" id="kendalaHp" placeholder="Contoh: 08123456789">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Kategori Kendala (Bisa pilih lebih dari satu)</label>
+                        <div style="background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; font-size: 0.85rem;">
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="AKTIVASI ASN DIGITAL/ MFA"> AKTIVASI ASN DIGITAL/ MFA
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="AKTIVASI EMAIL DINAS"> AKTIVASI EMAIL DINAS
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="AKTIVASI BSRE"> AKTIVASI BSRE
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="AKTIVASI SIKD"> AKTIVASI SIKD
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="PENANDATANGANAN PERJANJIAN KERJA"> PENANDATANGANAN PERJANJIAN KERJA
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="PEMBUBUHAN E METERAI"> PEMBUBUHAN E METERAI
+                            </label>
+                            <label style="font-weight: normal; margin-bottom: 0; display: block; cursor: pointer;">
+                                <input type="checkbox" name="kategoriPilihan" value="LAINNYA"> LAINNYA
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Uraian Detail Kendala</label>
+                        <textarea id="kendalaUraian" placeholder="Ceritakan detail masalah yang Anda alami..." style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+
+                    <button onclick="kirimKendalaKeSpreadsheet()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 10px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Kirim Tiket Laporan</button>
+                </div>
+
+                <!-- MENU KHUSUS ADMIN -->
+                <div style="margin-top: 25px; text-align: center; padding-top: 15px;">
+                    <button onclick="cekPasswordAdmin()" style="background-color: #475569; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Buka Menu Rahasia Admin</button>
+                    
+                    <div id="adminResetPanel" style="display: none; margin-top: 12px; background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px dashed #94a3b8;">
+                        <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 8px;">Mode Administrator Aktif</div>
+                        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 8px;">1. Reset Limit NIK (Ketikan NIK di atas)</button>
+                        <button onclick="bukaDashboardMonitoring()" style="background-color: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%;">2. Buka Monitoring Ticketing</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- SECTION DASHBOARD -->
+            <!-- SECTION 2: DASHBOARD KREDENSIAL PEGAWAI -->
             <div id="dashboard-section">
-                <h2>Akun & Kredensial Anda</h2>
-                <p class="subtitle">Simpan informasi ini dengan aman.</p>
-
+                <h2>Portal Pribadi Anda</h2>
                 <div class="user-profile-box">
                     <div>
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: bold;">PEGAWAI</div>
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: bold;">PEGAWAI AKTIF</div>
                         <div id="resNama" style="font-weight: bold; font-size: 0.95rem;">-</div>
                         <div id="resIden" style="font-size: 0.75rem; color: #475569;">-</div>
+                        <div id="resUnitKerja" style="font-size: 0.75rem; color: #0284c7; font-weight: bold; margin-top: 4px;">-</div>
                     </div>
-                    <button class="btn-copy btn-logout" onclick="handleLogout()">Keluar</button>
+                    <button class="btn-copy btn-logout" onclick="kembaliKeHome()">Keluar</button>
                 </div>
 
                 <div class="tab-container">
-                    <button class="tab-btn active" onclick="switchTab('email', event)">Email Kedinasan</button>
+                    <button class="tab-btn active" onclick="switchTab('email', event)">Email Dinas</button>
                     <button class="tab-btn" onclick="switchTab('sikd', event)">Akun SIKD</button>
+                    <button class="tab-btn" onclick="switchTab('tiket', event)">Status Tiket Saya</button>
                 </div>
 
-                <!-- TAB 1: EMAIL -->
                 <div id="tab-email" class="tab-content active">
-                    <div class="alert-box"><strong>Catatan:</strong> Segera ganti password sementara di bawah setelah login pertama kali.</div>
                     <div class="info-card">
-        <div class="info-label">User Email Kedinasan</div>
-        <div class="credential-row">
-            <span id="resUserEmail" class="credential-value">-</span>
-            <button class="btn-copy" onclick="copyText('resUserEmail')">Salin</button>
-        </div>
-    </div>
-                    <div class="info-card">
-                        <div class="info-label">Alamat Email Kedinasan</div>
+                        <div class="info-label">Alamat Email</div>
                         <div class="credential-row">
                             <span id="resEmail" class="credential-value">-</span>
                             <button class="btn-copy" onclick="copyText('resEmail')">Salin</button>
                         </div>
                     </div>
                     <div class="info-card">
-                        <div class="info-label">Password Email Kedinasan</div>
+                        <div class="info-label">Password Email</div>
                         <div class="credential-row">
                             <span id="resPwdEmail" class="credential-value">-</span>
                             <button class="btn-copy" onclick="copyText('resPwdEmail')">Salin</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- TAB 2: SIKD -->
+                
                 <div id="tab-sikd" class="tab-content">
-                    <div class="alert-box" style="background-color: #f5f3ff; border-color: #ede9fe; color: #5b21b6;"><strong>Informasi SIKD:</strong> Gunakan kredensial ini untuk masuk ke Sistem Informasi Kearsipan Dinamis.</div>
                     <div class="info-card">
-                        <div class="info-label">Username / User SIKD</div>
+                        <div class="info-label">Username SIKD</div>
                         <div class="credential-row">
                             <span id="resUserSikd" class="credential-value">-</span>
                             <button class="btn-copy" onclick="copyText('resUserSikd')">Salin</button>
                         </div>
                     </div>
-                    <div class="info-card">
-                        <div class="info-label">Password SIKD</div>
-                        <div class="credential-row">
-                            <span id="resPwdSikd" class="credential-value">-</span>
-                            <button class="btn-copy" onclick="copyText('resPwdSikd')">Salin</button>
-                        </div>
-                    </div>
                 </div>
 
+                <div id="tab-tiket" class="tab-content">
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0;">Daftar pengaduan kendala yang pernah Anda buat:</p>
+                    <div id="listTiketUserContainer"></div>
+                </div>
             </div>
 
+            <!-- SECTION 3: DASHBOARD MONITORING ADMIN -->
+            <div id="monitoring-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2 style="margin: 0;">Monitoring Ticketing Bantuan</h2>
+                    <button onclick="kembaliKeHome()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Tutup Dashboard</button>
+                </div>
+                <p id="statusLoadMonitoring" style="font-size: 0.85rem; color: #2563eb; font-weight: bold; margin-bottom: 15px;">Memuat data dari Google Sheet...</p>
+                
+                <div id="rekapKendalaPanel" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;"></div>
+                
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">No</th>
+                                <th style="width: 150px;">Pelapor (NIK & Nama)</th>
+                                <th>Kategori & Detail Kendala</th>
+                                <th style="width: 250px;">Status, Petugas, & Solusi</th>
+                                <th style="width: 100px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelKendalaBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="paginationPanel" class="pagination-panel"></div>
+            </div>
         </div>
     </div>
 
     <footer>&copy; 2026 Unit Pengelola Kepegawaian & Teknologi Informasi.</footer>
 
     <script>
-        // Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrEnGs9IqNFrsr2rK8WMuQ4tyjcH0qA4Pe5OzFn4uGSWHKtWDpuKQAtg99qWmJAXlP0Q/exec";
+        // ==========================================
+        // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfn_HbwVcww5iZJ9R5lJ5zaShX5RmxPRk3lHTvPe8g6GMmuCoVkSOTF0k0K8spZ-8U-Q/exec";
+        // ==========================================
 
+        function kembaliKeHome() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('monitoring-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('mainContainer').classList.remove('admin-wide');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => alert('Berhasil disalin!'));
+        }
+
+        function switchTab(tabName, event) {
+            document.getElementById('tab-email').classList.remove('active');
+            document.getElementById('tab-sikd').classList.remove('active');
+            document.getElementById('tab-tiket').classList.remove('active');
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            if (event) event.currentTarget.classList.add('active');
+        }
+
+        function toggleBantuanForm() {
+            const panel = document.getElementById('bantuanFormPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // --- FETCH OTOMATIS: AUTO-FILL NAMA & UNIT KERJA SAAT KETIK NIK ---
+        document.getElementById('kendalaNip').addEventListener('blur', function() {
+            const nikInput = this.value.trim();
+            const msgBox = document.getElementById('loadingPegawaiMsg');
+            if(nikInput !== "") {
+                msgBox.style.display = 'block';
+                fetch(`${SCRIPT_URL}?action=getPegawai&nik=${encodeURIComponent(nikInput)}`)
+                .then(res => res.json())
+                .then(data => {
+                    msgBox.style.display = 'none';
+                    if(data.status === "success") {
+                        document.getElementById('kendalaNama').value = data.nama;
+                        document.getElementById('kendalaUnitKerja').value = data.unitKerja; 
+                    } else {
+                        document.getElementById('kendalaNama').value = "Data tidak ditemukan";
+                        document.getElementById('kendalaUnitKerja').value = "-"; 
+                    }
+                }).catch(err => {
+                    msgBox.style.display = 'none';
+                    document.getElementById('kendalaNama').value = "Gagal memuat data";
+                });
+            } else {
+                document.getElementById('kendalaNama').value = "";
+                document.getElementById('kendalaUnitKerja').value = ""; 
+            }
+        });
+
+        // --- FETCH: LOGIN PEGAWAI & RENDER TIKET ---
         function handleLogin() {
             const inputVal = document.getElementById('searchInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             const loadingMsg = document.getElementById('loadingMsg');
 
             if (!inputVal) {
-                errorMsg.innerText = "Silakan masukkan NIP atau No KTP terlebih dahulu.";
-                errorMsg.style.display = 'block';
-                return;
+                errorMsg.innerText = "Masukkan NIK terlebih dahulu.";
+                errorMsg.style.display = 'block'; return;
             }
 
-            // Batasan maksimal 3 kali pencarian per perangkat (localStorage)
             const storageKey = 'akses_count_' + inputVal;
             let currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
             if (currentCount >= 3) {
-                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> NIP/KTP ini sudah pernah mengakses informasi kredensial sebanyak 3 kali dan telah terkunci.";
-                errorMsg.style.display = 'block';
-                return;
+                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> Anda sudah mengakses 3 kali. Hubungi admin.";
+                errorMsg.style.display = 'block'; return;
             }
 
             errorMsg.style.display = 'none';
             loadingMsg.style.display = 'block';
 
-            // Ambil data secara aman dari Google Sheets via Apps Script
-            fetch(`${SCRIPT_URL}?q=${encodeURIComponent(inputVal)}`)
-                .then(response => response.json())
-                .then(data => {
-                    loadingMsg.style.display = 'none';
-                    if (data.status === "success") {
-                        currentCount++;
-                        localStorage.setItem(storageKey, currentCount);
+            fetch(`${SCRIPT_URL}?action=getPegawai&nik=${encodeURIComponent(inputVal)}`)
+            .then(res => res.json())
+            .then(data => {
+                loadingMsg.style.display = 'none';
+                if(data.status === "success") {
+                    currentCount++;
+                    localStorage.setItem(storageKey, currentCount);
+                    
+                    document.getElementById('resNama').innerText = data.nama;
+                    document.getElementById('resIden').innerText = `NIK: ${data.nik}`;
+                    document.getElementById('resUnitKerja').innerText = `Unit: ${data.unitKerja}`;
+                    document.getElementById('resEmail').innerText = data.email || "-";
+                    document.getElementById('resPwdEmail').innerText = data.pwdEmail || "-";
+                    document.getElementById('resUserSikd').innerText = data.userSikd || "-";
+                    
+                    renderTiketKhususUser(data.tiket); // Render riwayat tiket asli dari sheet
 
-                        // Tampilkan hasil ke dashboard
-                        document.getElementById('resNama').innerText = data.nama;
-                        document.getElementById('resIden').innerText = `NIP: ${data.nip} (Akses ke-${currentCount}/3)`;
-                        document.getElementById('resUserEmail').innerText = data.userEmail || "-";
-                        document.getElementById('resEmail').innerText = data.email;
-                        document.getElementById('resPwdEmail').innerText = data.pwdEmail;
-                        document.getElementById('resUserSikd').innerText = data.userSikd || "-";
-                        document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
-
-                        document.getElementById('login-section').style.display = 'none';
-                        document.getElementById('dashboard-section').style.display = 'block';
-                        switchTab('email');
-                    } else {
-                        errorMsg.innerText = "NIP atau No KTP tidak ditemukan dalam database.";
-                        errorMsg.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    loadingMsg.style.display = 'none';
-                    errorMsg.innerText = "Terjadi kesalahan koneksi ke server.";
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard-section').style.display = 'block';
+                    switchTab('email');
+                    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                } else {
+                    errorMsg.innerText = "NIK tidak ditemukan dalam database.";
                     errorMsg.style.display = 'block';
+                }
+            }).catch(err => {
+                loadingMsg.style.display = 'none';
+                errorMsg.innerText = "Terjadi kesalahan server.";
+                errorMsg.style.display = 'block';
+            });
+        }
+
+        function renderTiketKhususUser(tiketArr) {
+            let html = "";
+            if(!tiketArr || tiketArr.length === 0) {
+                html = `<div style="text-align:center; padding:15px; color:#94a3b8; font-size:0.85rem;">Belum ada riwayat pengaduan tiket.</div>`;
+            } else {
+                // Tampilkan dari yang paling baru (terbalik)
+                tiketArr.slice().reverse().forEach((tiket) => {
+                    let badgeColor = "#3b82f6"; 
+                    if (tiket.status === "Sedang Konfirmasi Lebih Lanjut") badgeColor = "#f59e0b";
+                    if (tiket.status === "Selesai") badgeColor = "#10b981";
+
+                    const petugasText = tiket.petugas ? `(Oleh: ${tiket.petugas})` : "";
+                    
+                    let balasanFinal = tiket.balasan || "<em>Belum ada balasan dari tim teknis.</em>";
+                    if (tiket.status === "Selesai") {
+                        balasanFinal += `<br><br><span style="color:#b45309; font-style:italic; font-size:0.75rem;">* Pesan Otomatis: Mohon Maaf atas kendala sebelumnya, tiket anda akan ditutup secara otomatis, silahkan buat kembali tiket pengaduan kendala bila menemukan kendala lainnya.</span>`;
+                    }
+
+                    // Format tanggal agar rapi jika berupa ISO string dari Google Sheet
+                    let tglDisplay = tiket.tanggal;
+                    try { if(tglDisplay.includes('T')) { let d = new Date(tglDisplay); tglDisplay = d.toLocaleString('id-ID'); } } catch(e){}
+
+                    html += `
+                    <div class="tiket-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <span style="font-size: 0.75rem; color: #64748b; font-weight: bold;">Kategori: ${tiket.kategori}</span>
+                            <span style="font-size: 0.7rem; color: #94a3b8;">${tglDisplay}</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #1e293b; margin-top: 6px; margin-bottom: 10px;">"${tiket.uraian}"</div>
+                        
+                        <span class="tiket-status" style="background-color: ${badgeColor};">${tiket.status}</span>
+                        
+                        <div style="background: #e0f2fe; padding: 10px; border-radius: 6px; border: 1px solid #bae6fd; margin-top: 8px;">
+                            <div style="font-size: 0.7rem; font-weight: bold; color: #0369a1; margin-bottom: 4px;">Balasan / Solusi Admin <span style="font-weight:normal; color:#0284c7;">${petugasText}</span>:</div>
+                            <div style="font-size: 0.8rem; color: #0c4a6e; white-space: pre-wrap;">${balasanFinal}</div>
+                        </div>
+                    </div>`;
                 });
-        }
-
-        function handleLogout() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('dashboard-section').style.display = 'none';
-            document.getElementById('login-section').style.display = 'block';
-        }
-
-        function switchTab(tabName, event) {
-            document.getElementById('tab-email').classList.remove('active');
-            document.getElementById('tab-sikd').classList.remove('active');
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            if (tabName === 'email') {
-                document.getElementById('tab-email').classList.add('active');
-                if (event) event.currentTarget.classList.add('active');
-                else buttons[0].classList.add('active');
-            } else if (tabName === 'sikd') {
-                document.getElementById('tab-sikd').classList.add('active');
-                if (event) event.currentTarget.classList.add('active');
-                else buttons[1].classList.add('active');
             }
+            document.getElementById('listTiketUserContainer').innerHTML = html;
         }
 
-        function copyText(elementId) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Berhasil disalin ke clipboard!');
+        // --- POST: KIRIM TIKET KE SHEET ---
+        function kirimKendalaKeSpreadsheet() {
+            const btn = event.target;
+            const payload = {
+                nik: document.getElementById('kendalaNip').value.trim(),
+                nama: document.getElementById('kendalaNama').value.trim(),
+                unitKerja: document.getElementById('kendalaUnitKerja').value.trim(),
+                hp: document.getElementById('kendalaHp').value.trim(),
+                uraian: document.getElementById('kendalaUraian').value.trim()
+            };
+
+            const checkboxKategori = document.querySelectorAll('input[name="kategoriPilihan"]:checked');
+            let kategoriArr = [];
+            checkboxKategori.forEach((cb) => { kategoriArr.push(cb.value); });
+            payload.kategori = kategoriArr.join(", ");
+
+            if (!payload.nik || !payload.nama || !payload.hp || kategoriArr.length === 0 || !payload.uraian) {
+                alert("Semua kolom dan minimal satu kategori kendala wajib diisi!"); return;
+            }
+
+            btn.innerText = "Mengirim..."; btn.disabled = true;
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "addTicket", data: payload })
+            })
+            .then(res => res.json())
+            .then(res => {
+                alert("Tiket Kendala berhasil dibuat! Silakan login kembali dengan NIK Anda untuk memantau status tiket.");
+                
+                document.getElementById('kendalaNip').value = '';
+                document.getElementById('kendalaNama').value = '';
+                document.getElementById('kendalaUnitKerja').value = '';
+                document.getElementById('kendalaHp').value = '';
+                document.getElementById('kendalaUraian').value = '';
+                document.querySelectorAll('input[name="kategoriPilihan"]').forEach(cb => cb.checked = false);
+                document.getElementById('bantuanFormPanel').style.display = 'none';
+                
+                btn.innerText = "Kirim Tiket Laporan"; btn.disabled = false;
+            }).catch(err => {
+                alert("Terjadi kesalahan saat mengirim tiket.");
+                btn.innerText = "Kirim Tiket Laporan"; btn.disabled = false;
             });
         }
-        function copyText(elementId) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Berhasil disalin ke clipboard!');
-            });
-        }
-function cekPasswordAdmin() {
-            let pin = prompt("Masukkan PIN / Password Khusus Admin:");
+
+        // --- FUNGSI ADMIN (PIN & RESET) ---
+        function cekPasswordAdmin() {
+            let pin = prompt("Masukkan PIN Administrator:");
             if (pin === "mutasimutandis321") {
                 document.getElementById('adminResetPanel').style.display = 'block';
-                alert("PIN Benar! Tombol reset telah dimunculkan.");
             } else if (pin !== null) {
-                alert("PIN Salah! Anda tidak memiliki hak akses admin.");
+                alert("Akses Ditolak! PIN Salah.");
             }
         }
-        // TAMBAHKAN FUNGSI RESET ADMIN DI SINI
         function adminResetAkses() {
             const inputVal = document.getElementById('searchInput').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-            
-            if (!inputVal) {
-                errorMsg.innerText = "Masukkan NIP atau No KTP yang ingin di-reset pada kolom di atas terlebih dahulu.";
-                errorMsg.style.display = 'block';
-                return;
-            }
-
-            const storageKey = 'akses_count_' + inputVal;
-            localStorage.removeItem(storageKey);
-            
-            errorMsg.style.background = "#dcfce7";
-            errorMsg.style.color = "#166534";
-            errorMsg.innerText = `Sukses! Batas akses untuk NIP/KTP ${inputVal} telah direset kembali menjadi 0 (bersih).`;
-            errorMsg.style.display = 'block';
+            if (!inputVal) { alert("Masukkan NIK di kolom paling atas terlebih dahulu!"); return; }
+            localStorage.removeItem('akses_count_' + inputVal);
+            alert("Sukses! Batas akses NIK tersebut telah direset.");
         }
-        // Fungsi untuk memunculkan/menyembunyikan form kendala
-function toggleBantuanForm() {
-    const panel = document.getElementById('bantuanFormPanel');
-    if (panel.style.display === 'none') {
-        panel.style.display = 'block';
-    } else {
-        panel.style.display = 'none';
-    }
-}
 
-// Fungsi otomatis merangkai laporan dan mengirimkannya langsung ke WhatsApp Anda
-function kirimKendalaWhatsApp() {
-    const nip = document.getElementById('kendalaNip').value.trim();
-    const nama = document.getElementById('kendalaNama').value.trim();
-    const hp = document.getElementById('kendalaHp').value.trim();
-    const pesan = document.getElementById('kendalaPesan').value.trim();
+        // --- FETCH: DASHBOARD MONITORING ADMIN ---
+        let dataKendalaMaster = [];
+        let dataFiltered = [];
+        let currentPage = 1;
+        const rowsPerPage = 10;
 
-    if (!nip || !nama || !hp || !pesan) {
-        alert("Mohon lengkapi semua kolom formulir kendala terlebih dahulu!");
-        return;
-    }
+        function bukaDashboardMonitoring() {
+            document.getElementById('mainContainer').classList.add('admin-wide');
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('monitoring-section').style.display = 'block';
+            const statusMsg = document.getElementById('statusLoadMonitoring');
+            statusMsg.innerText = "Mengambil data tiket dari Google Sheet...";
+            
+            fetch(`${SCRIPT_URL}?action=getAllTickets`)
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === "success") {
+                    dataKendalaMaster = res.data;
+                    renderRekapitulasi();
+                    filterKendala('Total To-Do'); 
+                } else {
+                    statusMsg.innerText = "Gagal memuat data dari Sheet.";
+                }
+            }).catch(err => {
+                statusMsg.innerText = "Koneksi ke Sheet terputus.";
+            });
+        }
 
-    // Ganti nomor di bawah dengan Nomor WhatsApp Admin Anda (awali dengan 62 tanpa angka 0 di depan)
-    const nomorAdminWhatsApp = "6281216305214"; 
+        function renderRekapitulasi() {
+            const tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
+            const rekap = { "Total To-Do": tiketAktif.length };
+            
+            tiketAktif.forEach(item => {
+                const arrKategori = item.kategori.split(', ');
+                arrKategori.forEach(kat => { rekap[kat] = (rekap[kat] || 0) + 1; });
+            });
 
-    const teksPesan = `Halo Admin, saya ingin melaporkan kendala pada Portal Kredensial:\n\n` +
-                      `*NIP/KTP*: ${nip}\n` +
-                      `*Nama*: ${nama}\n` +
-                      `*No HP/WA*: ${hp}\n` +
-                      `*Kendala*: ${pesan}`;
+            let html = "";
+            for (const [kategori, jumlah] of Object.entries(rekap)) {
+                const addClass = kategori === "Total To-Do" ? "all-data" : "";
+                html += `
+                <div class="rekap-box ${addClass}" onclick="filterKendala('${kategori}')">
+                    <span style="font-size: 1.4rem; font-weight: bold;">${jumlah}</span>
+                    <span style="font-size: 0.7rem; text-align: center; font-weight: 600;">${kategori}</span>
+                </div>`;
+            }
+            document.getElementById('rekapKendalaPanel').innerHTML = html;
+        }
 
-    const urlWa = `https://wa.me/${nomorAdminWhatsApp}?text=${encodeURIComponent(teksPesan)}`;
-    
-    // Membuka WhatsApp secara otomatis
-    window.open(urlWa, '_blank');
-}
+        function filterKendala(kategoriDipilih) {
+            document.getElementById('statusLoadMonitoring').innerText = `Menampilkan To-Do: ${kategoriDipilih}`;
+            const tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
+
+            if (kategoriDipilih === "Total To-Do") {
+                dataFiltered = [...tiketAktif];
+            } else {
+                dataFiltered = tiketAktif.filter(item => item.kategori.includes(kategoriDipilih));
+            }
+            currentPage = 1; 
+            renderTabelKendala();
+        }
+
+        function renderTabelKendala() {
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const dataToDisplay = dataFiltered.slice(startIndex, endIndex);
+
+            let html = "";
+            if (dataToDisplay.length === 0) {
+                html = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #64748b;">Hore! Tidak ada tugas / kendala tertunda di filter ini.</td></tr>`;
+            } else {
+                dataToDisplay.forEach((item, index) => {
+                    let tglDisplay = item.waktu;
+                    try { if(tglDisplay.includes('T')) { let d = new Date(tglDisplay); tglDisplay = d.toLocaleString('id-ID'); } } catch(e){}
+
+                    html += `
+                    <tr>
+                        <td><b>#${item.row}</b><br><span style="font-size:0.65rem; color:gray;">${tglDisplay}</span></td>
+                        <td><b>${item.nip}</b><br>${item.nama}<br><a href="https://wa.me/62${String(item.hp).substring(1)}" target="_blank" style="color: #16a34a; text-decoration: none; font-size: 0.75rem; font-weight: bold;">💬 Chat WA</a></td>
+                        <td><span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;">${item.kategori}</span><br><div style="margin-top:5px;">${item.uraian}</div></td>
+                        <td>
+                            <select id="status_${item.row}" class="status-select">
+                                <option value="Proses" ${item.status === 'Proses' ? 'selected' : ''}>Proses</option>
+                                <option value="Sedang Konfirmasi Lebih Lanjut" ${item.status === 'Sedang Konfirmasi Lebih Lanjut' ? 'selected' : ''}>Sedang Konfirmasi Lebih Lanjut</option>
+                                <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                            </select>
+                            <input type="text" id="petugas_${item.row}" value="${item.petugas}" placeholder="Nama Petugas..." class="petugas-input">
+                            <textarea id="balasan_${item.row}" placeholder="Ketik solusi atau balasan di sini..." class="balasan-input">${item.balasanAdmin}</textarea>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button id="btn_${item.row}" onclick="simpanUpdate(${item.row})" class="btn-simpan-status">Simpan Update</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            document.getElementById('tabelKendalaBody').innerHTML = html;
+            renderPagination(); 
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(dataFiltered.length / rowsPerPage);
+            let html = "";
+            if (totalPages > 1) {
+                html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Prev</button>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    const activeClass = i === currentPage ? 'active' : '';
+                    html += `<button class="page-btn ${activeClass}" onclick="changePage(${i})">${i}</button>`;
+                }
+                html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+            }
+            document.getElementById('paginationPanel').innerHTML = html;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(dataFiltered.length / rowsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTabelKendala(); 
+            }
+        }
+
+        // --- POST: UPDATE TIKET OLEH ADMIN ---
+        function simpanUpdate(row) {
+            const btn = document.getElementById(`btn_${row}`);
+            const st = document.getElementById(`status_${row}`).value;
+            const pt = document.getElementById(`petugas_${row}`).value;
+            const blsn = document.getElementById(`balasan_${row}`).value;
+            
+            btn.innerText = "Menyimpan...";
+            btn.style.backgroundColor = "#94a3b8";
+
+            const payload = { row: row, status: st, petugas: pt, balasan: blsn };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "updateTicket", data: payload })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(st === 'Selesai') {
+                    // Update master data lokal agar langsung hilang dari To-Do
+                    const itemIndex = dataKendalaMaster.findIndex(item => item.row === row);
+                    if (itemIndex > -1) {
+                        dataKendalaMaster[itemIndex].status = 'Selesai';
+                        dataKendalaMaster[itemIndex].petugas = pt;
+                        dataKendalaMaster[itemIndex].balasanAdmin = blsn;
+                    }
+                    const activeFilter = document.getElementById('statusLoadMonitoring').innerText.replace('Menampilkan To-Do: ', '');
+                    filterKendala(activeFilter);
+                    renderRekapitulasi();
+                    alert("Sukses tersimpan ke Spreadsheet! Tiket ditutup dan diarsipkan dari daftar To-Do.");
+                } else {
+                    btn.innerText = "Tersimpan!";
+                    btn.style.backgroundColor = "#0284c7";
+                    setTimeout(() => { btn.innerText = "Simpan Update"; btn.style.backgroundColor = "#16a34a"; }, 2000);
+                }
+            }).catch(err => {
+                alert("Gagal menyimpan ke Sheet. Periksa koneksi.");
+                btn.innerText = "Simpan Update";
+                btn.style.backgroundColor = "#16a34a";
+            });
+        }
     </script>
 </body>
 </html>
