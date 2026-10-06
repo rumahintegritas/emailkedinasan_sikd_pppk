@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Kredensial Akun ASN / PPPK</title>
+    <style>
+        :root { --primary: #1e3a8a; --primary-light: #3b82f6; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-color: #1e293b; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 100vh; }
+        header { background-color: var(--primary); color: white; padding: 16px 24px; text-align: center; font-weight: bold; font-size: 1.1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .main-wrapper { display: flex; justify-content: center; align-items: center; padding: 20px; flex: 1; }
+        .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        h2 { margin-top: 0; color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 6px; }
+        p.subtitle { text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
+        input { width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        button.btn-main { width: 100%; background-color: var(--primary); color: white; border: none; padding: 11px; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 4px; }
+        button.btn-main:hover { background-color: #1e40af; }
+        .error-msg { color: #dc2626; font-size: 0.82rem; margin-top: 10px; text-align: center; display: none; background: #fee2e2; padding: 10px; border-radius: 6px; }
+        #dashboard-section { display: none; }
+        .user-profile-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .tab-container { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
+        .tab-btn { flex: 1; padding: 10px; background: none; border: none; font-weight: 600; font-size: 0.85rem; color: #64748b; cursor: pointer; }
+        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; background-color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .info-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+        .info-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+        .credential-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; margin-top: 4px; }
+        .credential-value { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #0f172a; word-break: break-all; }
+        .btn-copy { background-color: #e2e8f0; color: #334155; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
+        .btn-copy:hover { background-color: #cbd5e1; }
+        .alert-box { background-color: #eff6ff; border: 1px solid #dbeafe; color: #1e40af; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 14px; }
+        .btn-logout { background-color: #64748b; width: auto; margin: 0; }
+        .loading { display: none; text-align: center; font-size: 0.85rem; color: #64748b; margin-top: 10px; }
+        footer { text-align: center; padding: 12px; font-size: 0.75rem; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <header>Portal Kredensial Akun ASN / PPPK</header>
+
+    <div class="main-wrapper">
+        <div class="container">
+            
+            <!-- SECTION LOGIN -->
+            <div id="login-section">
+                <h2>Verifikasi Data Pegawai</h2>
+                <p class="subtitle">Masukkan NIP atau NO KTP Anda untuk melihat akun kedinasan.</p>
+                
+                <div class="form-group">
+                    <label for="searchInput">Nomor NIP atau NO KTP</label>
+                    <input type="text" id="searchInput" placeholder="Masukkan NIP atau No KTP...">
+                </div>
+
+                <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
+                <div id="loadingMsg" class="loading">Sedang memverifikasi data...</div>
+                <div id="errorMsg" class="error-msg"></div>
+            </div>
+
+            <!-- SECTION DASHBOARD -->
+            <div id="dashboard-section">
+                <h2>Akun & Kredensial Anda</h2>
+                <p class="subtitle">Simpan informasi ini dengan aman.</p>
+
+                <div class="user-profile-box">
+                    <div>
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: bold;">PEGAWAI</div>
+                        <div id="resNama" style="font-weight: bold; font-size: 0.95rem;">-</div>
+                        <div id="resIden" style="font-size: 0.75rem; color: #475569;">-</div>
+                    </div>
+                    <button class="btn-copy btn-logout" onclick="handleLogout()">Keluar</button>
+                </div>
+
+                <div class="tab-container">
+                    <button class="tab-btn active" onclick="switchTab('email', event)">Email Kedinasan</button>
+                    <button class="tab-btn" onclick="switchTab('sikd', event)">Akun SIKD</button>
+                </div>
+
+                <!-- TAB 1: EMAIL -->
+                <div id="tab-email" class="tab-content active">
+                    <div class="alert-box"><strong>Catatan:</strong> Segera ganti password sementara di bawah setelah login pertama kali.</div>
+                    <div class="info-card">
+                        <div class="info-label">Alamat Email Kedinasan</div>
+                        <div class="credential-row">
+                            <span id="resEmail" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resEmail')">Salin</button>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Password Email Kedinasan</div>
+                        <div class="credential-row">
+                            <span id="resPwdEmail" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resPwdEmail')">Salin</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SIKD -->
+                <div id="tab-sikd" class="tab-content">
+                    <div class="alert-box" style="background-color: #f5f3ff; border-color: #ede9fe; color: #5b21b6;"><strong>Informasi SIKD:</strong> Gunakan kredensial ini untuk masuk ke Sistem Informasi Kearsipan Dinamis.</div>
+                    <div class="info-card">
+                        <div class="info-label">Username / User SIKD</div>
+                        <div class="credential-row">
+                            <span id="resUserSikd" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resUserSikd')">Salin</button>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Password SIKD</div>
+                        <div class="credential-row">
+                            <span id="resPwdSikd" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resPwdSikd')">Salin</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Unit Pengelola Kepegawaian & Teknologi Informasi.</footer>
+
+    <script>
+        // Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda
+        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+        function handleLogin() {
+            const inputVal = document.getElementById('searchInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const loadingMsg = document.getElementById('loadingMsg');
+
+            if (!inputVal) {
+                errorMsg.innerText = "Silakan masukkan NIP atau No KTP terlebih dahulu.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Batasan maksimal 3 kali pencarian per perangkat (localStorage)
+            const storageKey = 'akses_count_' + inputVal;
+            let currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
+            if (currentCount >= 3) {
+                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> NIP/KTP ini sudah pernah mengakses informasi kredensial sebanyak 3 kali dan telah terkunci.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            errorMsg.style.display = 'none';
+            loadingMsg.style.display = 'block';
+
+            // Ambil data secara aman dari Google Sheets via Apps Script
+            fetch(`${SCRIPT_URL}?q=${encodeURIComponent(inputVal)}`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingMsg.style.display = 'none';
+                    if (data.status === "success") {
+                        currentCount++;
+                        localStorage.setItem(storageKey, currentCount);
+
+                        // Tampilkan hasil ke dashboard
+                        document.getElementById('resNama').innerText = data.nama;
+                        document.getElementById('resIden').innerText = `NIP: ${data.nip} (Akses ke-${currentCount}/3)`;
+                        document.getElementById('resEmail').innerText = data.email;
+                        document.getElementById('resPwdEmail').innerText = data.pwdEmail;
+                        document.getElementById('resUserSikd').innerText = data.userSikd || "-";
+                        document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
+
+                        document.getElementById('login-section').style.display = 'none';
+                        document.getElementById('dashboard-section').style.display = 'block';
+                        switchTab('email');
+                    } else {
+                        errorMsg.innerText = "NIP atau No KTP tidak ditemukan dalam database.";
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    loadingMsg.style.display = 'none';
+                    errorMsg.innerText = "Terjadi kesalahan koneksi ke server.";
+                    errorMsg.style.display = 'block';
+                });
+        }
+
+        function handleLogout() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+        }
+
+        function switchTab(tabName, event) {
+            document.getElementById('tab-email').classList.remove('active');
+            document.getElementById('tab-sikd').classList.remove('active');
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (tabName === 'email') {
+                document.getElementById('tab-email').classList.add('active');
+                if (event) event.currentTarget.classList.add('active');
+                else buttons[0].classList.add('active');
+            } else if (tabName === 'sikd') {
+                document.getElementById('tab-sikd').classList.add('active');
+                if (event) event.currentTarget.classList.add('active');
+                else buttons[1].classList.add('active');
+            }
+        }
+
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Berhasil disalin ke clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
