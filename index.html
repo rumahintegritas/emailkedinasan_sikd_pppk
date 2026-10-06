@@ -7,67 +7,73 @@
     <style>
         :root { --primary: #1e3a8a; --primary-light: #3b82f6; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-color: #1e293b; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 100vh; }
-        header { background-color: var(--primary); color: white; padding: 16px 24px; text-align: center; font-weight: bold; font-size: 1.1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header { background-color: var(--primary); color: white; padding: 20px 24px; text-align: center; font-weight: bold; font-size: 1.3rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         
-        .marquee-container { background-color: #fef3c7; border-bottom: 1px solid #fde68a; overflow: hidden; white-space: nowrap; padding: 8px 0; }
-        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; font-size: 0.85rem; font-weight: 600; color: #b45309; }
+        .marquee-container { background-color: #fef3c7; border-bottom: 1px solid #fde68a; overflow: hidden; white-space: nowrap; padding: 10px 0; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; font-size: 1rem; font-weight: 600; color: #b45309; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .main-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: 20px; flex: 1; margin-top: 10px; }
-        .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
-        .container.admin-wide { max-width: 1000px; } 
+        .main-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: 20px; flex: 1; margin-top: 15px; }
         
-        h2 { margin-top: 0; color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 6px; }
-        p.subtitle { text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
-        input[type="text"], textarea { width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; font-family: inherit; }
+        /* DIPERBESAR: Lebar container diubah menjadi 650px dan padding ditambah */
+        .container { width: 100%; max-width: 650px; background: var(--card-bg); padding: 35px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
+        .container.admin-wide { max-width: 1100px; } 
+        
+        /* DIPERBESAR: Ukuran font judul, subtitle, label, input, dan tombol */
+        h2 { margin-top: 0; color: var(--primary); text-align: center; font-size: 1.7rem; margin-bottom: 8px; }
+        p.subtitle { text-align: center; color: #64748b; font-size: 1rem; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 1rem; }
+        input[type="text"], textarea { width: 100%; padding: 12px 15px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1.05rem; font-family: inherit; }
         input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
         input[readonly] { background-color: #f1f5f9; color: #475569; cursor: not-allowed; font-weight: 600; }
-        button.btn-main { width: 100%; background-color: var(--primary); color: white; border: none; padding: 11px; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 4px; }
+        button.btn-main { width: 100%; background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 6px; }
         button.btn-main:hover { background-color: #1e40af; }
         
-        .error-msg { color: #dc2626; font-size: 0.82rem; margin-top: 10px; text-align: center; display: none; background: #fee2e2; padding: 10px; border-radius: 6px; }
-        .loading { display: none; text-align: center; font-size: 0.85rem; color: #64748b; margin-top: 10px; font-weight:bold; }
+        .error-msg { color: #dc2626; font-size: 0.9rem; margin-top: 15px; text-align: center; display: none; background: #fee2e2; padding: 12px; border-radius: 6px; }
+        .loading { display: none; text-align: center; font-size: 0.95rem; color: #64748b; margin-top: 15px; font-weight:bold; }
         
         #dashboard-section, #monitoring-section { display: none; }
         
-        .user-profile-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .tab-container { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
-        .tab-btn { flex: 1; padding: 10px 5px; background: none; border: none; font-weight: 600; font-size: 0.8rem; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; }
+        /* Penyesuaian profil dan tab */
+        .user-profile-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .tab-container { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px 5px; background: none; border: none; font-weight: 600; font-size: 0.95rem; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; background-color: #f8fafc; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .info-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
-        .info-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-        .credential-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; margin-top: 4px; }
-        .credential-value { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #0f172a; word-break: break-all; }
-        .btn-copy { background-color: #e2e8f0; color: #334155; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
-        .btn-logout { background-color: #64748b; color: white; width: auto; margin: 0; }
         
-        .tiket-card { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 6px; margin-bottom: 12px; }
-        .tiket-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; color: white; margin-bottom: 8px; }
+        .info-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 15px; }
+        .info-label { font-size: 0.85rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
+        .credential-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; margin-top: 6px; }
+        .credential-value { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #0f172a; word-break: break-all; }
+        .btn-copy { background-color: #e2e8f0; color: #334155; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600; }
+        .btn-logout { background-color: #64748b; color: white; width: auto; margin: 0; font-size: 0.95rem; padding: 8px 15px;}
         
-        .admin-table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 6px; border: 1px solid #cbd5e1; }
-        table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 800px; }
-        table.admin-table th { background-color: #f1f5f9; padding: 10px; text-align: left; border-bottom: 2px solid #cbd5e1; color: #0f172a; }
-        table.admin-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .tiket-card { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin-bottom: 15px; }
+        .tiket-status { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; color: white; margin-bottom: 8px; }
+        
+        /* Tabel Admin */
+        .admin-table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 900px; }
+        table.admin-table th { background-color: #f1f5f9; padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1; color: #0f172a; }
+        table.admin-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
         table.admin-table tr:hover { background-color: #f8fafc; }
-        .status-select { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; margin-bottom: 6px; background: white; font-weight:bold; }
-        .petugas-input { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; box-sizing: border-box; margin-bottom: 6px; background: #f8fafc; }
-        .balasan-input { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.75rem; width: 100%; box-sizing: border-box; resize: vertical; height: 60px; font-family: inherit; }
-        .btn-simpan-status { background-color: #16a34a; color: white; border: none; padding: 8px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; width: 100%; margin-top: 4px;}
+        .status-select { padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.85rem; width: 100%; margin-bottom: 8px; background: white; font-weight:bold; }
+        .petugas-input { padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.85rem; width: 100%; box-sizing: border-box; margin-bottom: 8px; background: #f8fafc; }
+        .balasan-input { padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.85rem; width: 100%; box-sizing: border-box; resize: vertical; height: 70px; font-family: inherit; }
+        .btn-simpan-status { background-color: #16a34a; color: white; border: none; padding: 10px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; width: 100%; margin-top: 6px;}
         
-        .rekap-box { background-color: #3b82f6; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 80px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .rekap-box { background-color: #3b82f6; color: white; padding: 15px 20px; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 90px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
         .rekap-box:hover { transform: scale(1.05); }
         .rekap-box.all-data { background-color: #1e3a8a; }
 
-        .pagination-panel { display: flex; justify-content: center; gap: 6px; margin-top: 15px; }
-        .page-btn { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; background: white; color: #1e293b; }
+        .pagination-panel { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+        .page-btn { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold; background: white; color: #1e293b; }
         .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
         .page-btn:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
 
-        footer { text-align: center; padding: 12px; font-size: 0.75rem; color: #64748b; }
+        footer { text-align: center; padding: 15px; font-size: 0.85rem; color: #64748b; }
     </style>
 </head>
 <body>
@@ -93,56 +99,56 @@
                 </div>
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
-                <button onclick="location.reload()" style="width: 100%; background-color: #64748b; color: white; border: none; padding: 9px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 8px;">Muat Ulang Halaman</button>
+                <button onclick="location.reload()" style="width: 100%; background-color: #64748b; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px;">Muat Ulang Halaman</button>
                 
                 <div id="loadingMsg" class="loading">Memuat data dari server...</div>
                 <div id="errorMsg" class="error-msg"></div>
 
-                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-decoration: underline;">Mengalami Kendala? Buat Tiket Bantuan</button>
+                <div style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 1.05rem; font-weight: bold; cursor: pointer; text-decoration: underline;">Mengalami Kendala? Buat Tiket Bantuan</button>
                 </div>
 
                 <!-- FORMULIR PENGADUAN KENDALA -->
-                <div id="bantuanFormPanel" style="display: none; margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; text-align: left;">
-                    <div style="font-size: 1rem; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; text-align: center;">Formulir Laporan Kendala</div>
+                <div id="bantuanFormPanel" style="display: none; margin-top: 20px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; text-align: left;">
+                    <div style="font-size: 1.2rem; font-weight: bold; color: #1e3a8a; margin-bottom: 15px; text-align: center;">Formulir Laporan Kendala</div>
                     
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <label>NIP / NIK <span style="font-size:0.7rem; color:#64748b; font-weight:normal;">(Ketik NIP/NIK lalu klik di luar kotak)</span></label>
+                    <div class="form-group">
+                        <label>NIP / NIK <span style="font-size:0.8rem; color:#64748b; font-weight:normal;">(Ketik NIP/NIK lalu klik di luar kotak)</span></label>
                         <input type="text" id="kendalaNip" placeholder="Masukkan NIP atau NIK...">
-                        <div id="loadingPegawaiMsg" style="font-size:0.75rem; color:#2563eb; display:none; margin-top:4px;">Mencari data pegawai...</div>
+                        <div id="loadingPegawaiMsg" style="font-size:0.85rem; color:#2563eb; display:none; margin-top:6px;">Mencari data pegawai...</div>
                     </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
+                    <div class="form-group">
                         <label>Nama Lengkap</label>
                         <input type="text" id="kendalaNama" placeholder="Otomatis terisi dari server..." readonly>
                     </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
+                    <div class="form-group">
                         <label>Unit Kerja Penugasan</label>
                         <input type="text" id="kendalaUnitKerja" placeholder="Otomatis terisi dari server..." readonly>
                     </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
+                    <div class="form-group">
                         <label>Nomor HP / WA</label>
                         <input type="text" id="kendalaHp" placeholder="Contoh: 08123456789">
                     </div>
                     
-                    <div class="form-group" style="margin-bottom: 10px;">
+                    <div class="form-group">
                         <label>Kategori Kendala (Bisa pilih lebih dari satu)</label>
-                        <div style="background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; font-size: 0.85rem;">
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                        <div style="background: white; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; font-size: 0.95rem;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="AKTIVASI ASN DIGITAL/ MFA"> AKTIVASI ASN DIGITAL/ MFA
                             </label>
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="AKTIVASI EMAIL DINAS"> AKTIVASI EMAIL DINAS
                             </label>
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="AKTIVASI BSRE"> AKTIVASI BSRE
                             </label>
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="AKTIVASI SIKD"> AKTIVASI SIKD
                             </label>
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="PENANDATANGANAN PERJANJIAN KERJA"> PENANDATANGANAN PERJANJIAN KERJA
                             </label>
-                            <label style="font-weight: normal; margin-bottom: 6px; display: block; cursor: pointer;">
+                            <label style="font-weight: normal; margin-bottom: 8px; display: block; cursor: pointer;">
                                 <input type="checkbox" name="kategoriPilihan" value="PEMBUBUHAN E METERAI"> PEMBUBUHAN E METERAI
                             </label>
                             <label style="font-weight: normal; margin-bottom: 0; display: block; cursor: pointer;">
@@ -151,22 +157,22 @@
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin-bottom: 15px;">
                         <label>Uraian Detail Kendala</label>
-                        <textarea id="kendalaUraian" placeholder="Ceritakan detail masalah yang Anda alami..." style="height: 80px; resize: vertical;"></textarea>
+                        <textarea id="kendalaUraian" placeholder="Ceritakan detail masalah yang Anda alami..." style="height: 100px; resize: vertical;"></textarea>
                     </div>
 
-                    <button onclick="kirimKendalaKeSpreadsheet()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 10px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Kirim Tiket Laporan</button>
+                    <button onclick="kirimKendalaKeSpreadsheet()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer;">Kirim Tiket Laporan</button>
                 </div>
 
                 <!-- MENU KHUSUS ADMIN -->
-                <div style="margin-top: 25px; text-align: center; padding-top: 15px;">
-                    <button onclick="cekPasswordAdmin()" style="background-color: #475569; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Buka Menu Rahasia Admin</button>
+                <div style="margin-top: 30px; text-align: center; padding-top: 20px;">
+                    <button onclick="cekPasswordAdmin()" style="background-color: #475569; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Buka Menu Khusus Admin</button>
                     
-                    <div id="adminResetPanel" style="display: none; margin-top: 12px; background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px dashed #94a3b8;">
-                        <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 8px;">Mode Administrator Aktif</div>
-                        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 8px;">1. Reset Limit NIP/NIK (Ketikan di atas)</button>
-                        <button onclick="bukaDashboardMonitoring()" style="background-color: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%;">2. Buka Monitoring Ticketing</button>
+                    <div id="adminResetPanel" style="display: none; margin-top: 15px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #94a3b8;">
+                        <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 10px;">Mode Administrator Aktif</div>
+                        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;">1. Reset Limit NIP/NIK (Ketikan di atas)</button>
+                        <button onclick="bukaDashboardMonitoring()" style="background-color: #0284c7; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; width: 100%;">2. Buka Monitoring Ticketing</button>
                     </div>
                 </div>
             </div>
@@ -176,10 +182,10 @@
                 <h2>Portal Pribadi Anda</h2>
                 <div class="user-profile-box">
                     <div>
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: bold;">PEGAWAI AKTIF</div>
-                        <div id="resNama" style="font-weight: bold; font-size: 0.95rem;">-</div>
-                        <div id="resIden" style="font-size: 0.75rem; color: #475569;">-</div>
-                        <div id="resUnitKerja" style="font-size: 0.75rem; color: #0284c7; font-weight: bold; margin-top: 4px;">-</div>
+                        <div style="font-size: 0.85rem; color: #64748b; font-weight: bold;">PEGAWAI AKTIF</div>
+                        <div id="resNama" style="font-weight: bold; font-size: 1.1rem; margin-top: 4px;">-</div>
+                        <div id="resIden" style="font-size: 0.9rem; color: #475569; margin-top: 4px;">-</div>
+                        <div id="resUnitKerja" style="font-size: 0.9rem; color: #0284c7; font-weight: bold; margin-top: 4px;">-</div>
                     </div>
                     <button class="btn-copy btn-logout" onclick="kembaliKeHome()">Keluar</button>
                 </div>
@@ -232,30 +238,30 @@
                 </div>
 
                 <div id="tab-tiket" class="tab-content">
-                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0;">Daftar pengaduan kendala yang pernah Anda buat:</p>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0;">Daftar pengaduan kendala yang pernah Anda buat:</p>
                     <div id="listTiketUserContainer"></div>
                 </div>
             </div>
 
             <!-- SECTION 3: DASHBOARD MONITORING ADMIN -->
             <div id="monitoring-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2 style="margin: 0;">Monitoring Ticketing Bantuan</h2>
-                    <button onclick="kembaliKeHome()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Tutup Dashboard</button>
+                    <button onclick="kembaliKeHome()" style="background-color: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">Tutup Dashboard</button>
                 </div>
-                <p id="statusLoadMonitoring" style="font-size: 0.85rem; color: #2563eb; font-weight: bold; margin-bottom: 15px;">Memuat data dari Google Sheet...</p>
+                <p id="statusLoadMonitoring" style="font-size: 0.95rem; color: #2563eb; font-weight: bold; margin-bottom: 20px;">Memuat data dari Google Sheet...</p>
                 
-                <div id="rekapKendalaPanel" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;"></div>
+                <div id="rekapKendalaPanel" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;"></div>
                 
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th style="width: 50px;">No</th>
-                                <th style="width: 150px;">Pelapor (NIP/NIK & Nama)</th>
+                                <th style="width: 60px;">No</th>
+                                <th style="width: 180px;">Pelapor (NIP/NIK & Nama)</th>
                                 <th>Kategori & Detail Kendala</th>
-                                <th style="width: 250px;">Status, Petugas, & Solusi</th>
-                                <th style="width: 100px;">Aksi</th>
+                                <th style="width: 280px;">Status, Petugas, & Solusi</th>
+                                <th style="width: 120px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tabelKendalaBody"></tbody>
@@ -271,7 +277,7 @@
 
     <script>
         // ==========================================
-        // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU HASIL DEPLOY ULANG (ANYONE)
+        // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfn_HbwVcww5iZJ9R5lJ5zaShX5RmxPRk3lHTvPe8g6GMmuCoVkSOTF0k0K8spZ-8U-Q/exec";
         // ==========================================
 
@@ -392,7 +398,7 @@
         function renderTiketKhususUser(tiketArr) {
             let html = "";
             if(!tiketArr || tiketArr.length === 0) {
-                html = `<div style="text-align:center; padding:15px; color:#94a3b8; font-size:0.85rem;">Belum ada riwayat pengaduan tiket.</div>`;
+                html = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:0.95rem;">Belum ada riwayat pengaduan tiket.</div>`;
             } else {
                 tiketArr.slice().reverse().forEach((tiket) => {
                     let badgeColor = "#3b82f6"; 
@@ -403,7 +409,7 @@
                     
                     let balasanFinal = tiket.balasan || "<em>Belum ada balasan dari tim teknis.</em>";
                     if (tiket.status === "Selesai") {
-                        balasanFinal += `<br><br><span style="color:#b45309; font-style:italic; font-size:0.75rem;">* Pesan Otomatis: Mohon Maaf atas kendala sebelumnya, tiket anda akan ditutup secara otomatis, silahkan buat kembali tiket pengaduan kendala bila menemukan kendala lainnya.</span>`;
+                        balasanFinal += `<br><br><span style="color:#b45309; font-style:italic; font-size:0.85rem;">* Pesan Otomatis: Mohon Maaf atas kendala sebelumnya, tiket anda akan ditutup secara otomatis, silahkan buat kembali tiket pengaduan kendala bila menemukan kendala lainnya.</span>`;
                     }
 
                     let tglDisplay = tiket.tanggal;
@@ -412,16 +418,16 @@
                     html += `
                     <div class="tiket-card">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: bold;">Kategori: ${tiket.kategori}</span>
-                            <span style="font-size: 0.7rem; color: #94a3b8;">${tglDisplay}</span>
+                            <span style="font-size: 0.85rem; color: #64748b; font-weight: bold;">Kategori: ${tiket.kategori}</span>
+                            <span style="font-size: 0.8rem; color: #94a3b8;">${tglDisplay}</span>
                         </div>
-                        <div style="font-size: 0.85rem; color: #1e293b; margin-top: 6px; margin-bottom: 10px;">"${tiket.uraian}"</div>
+                        <div style="font-size: 1rem; color: #1e293b; margin-top: 8px; margin-bottom: 12px;">"${tiket.uraian}"</div>
                         
                         <span class="tiket-status" style="background-color: ${badgeColor};">${tiket.status}</span>
                         
-                        <div style="background: #e0f2fe; padding: 10px; border-radius: 6px; border: 1px solid #bae6fd; margin-top: 8px;">
-                            <div style="font-size: 0.7rem; font-weight: bold; color: #0369a1; margin-bottom: 4px;">Balasan / Solusi Admin <span style="font-weight:normal; color:#0284c7;">${petugasText}</span>:</div>
-                            <div style="font-size: 0.8rem; color: #0c4a6e; white-space: pre-wrap;">${balasanFinal}</div>
+                        <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd; margin-top: 10px;">
+                            <div style="font-size: 0.8rem; font-weight: bold; color: #0369a1; margin-bottom: 6px;">Balasan / Solusi Admin <span style="font-weight:normal; color:#0284c7;">${petugasText}</span>:</div>
+                            <div style="font-size: 0.95rem; color: #0c4a6e; white-space: pre-wrap;">${balasanFinal}</div>
                         </div>
                     </div>`;
                 });
@@ -532,8 +538,8 @@
                 const addClass = kategori === "Total To-Do" ? "all-data" : "";
                 html += `
                 <div class="rekap-box ${addClass}" onclick="filterKendala('${kategori}')">
-                    <span style="font-size: 1.4rem; font-weight: bold;">${jumlah}</span>
-                    <span style="font-size: 0.7rem; text-align: center; font-weight: 600;">${kategori}</span>
+                    <span style="font-size: 1.6rem; font-weight: bold;">${jumlah}</span>
+                    <span style="font-size: 0.8rem; text-align: center; font-weight: 600;">${kategori}</span>
                 </div>`;
             }
             document.getElementById('rekapKendalaPanel').innerHTML = html;
@@ -559,26 +565,25 @@
 
             let html = "";
             if (dataToDisplay.length === 0) {
-                html = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #64748b;">Hore! Tidak ada tugas / kendala tertunda di filter ini.</td></tr>`;
+                html = `<tr><td colspan="5" style="text-align: center; padding: 25px; font-size:1.05rem; color: #64748b;">Hore! Tidak ada tugas / kendala tertunda di filter ini.</td></tr>`;
             } else {
                 dataToDisplay.forEach((item, index) => {
                     let tglDisplay = item.waktu;
                     try { if(tglDisplay.includes('T')) { let d = new Date(tglDisplay); tglDisplay = d.toLocaleString('id-ID'); } } catch(e){}
 
-                    // PERBAIKAN LOGIKA NOMOR WHATSAPP (Mendeteksi berbagai awalan nomor)
-                    let rawHp = String(item.hp).replace(/\D/g, ''); // bersihkan spasi atau simbol
+                    let rawHp = String(item.hp).replace(/\D/g, ''); 
                     let waNumber = rawHp;
                     if (waNumber.startsWith('0')) {
                         waNumber = '62' + waNumber.substring(1);
                     } else if (waNumber.startsWith('8')) {
-                        waNumber = '62' + waNumber; // Menangani data lama yang terlanjur tanpa '0' di depannya
+                        waNumber = '62' + waNumber; 
                     }
 
                     html += `
                     <tr>
-                        <td><b>#${item.row}</b><br><span style="font-size:0.65rem; color:gray;">${tglDisplay}</span></td>
-                        <td><b>${item.nip}</b><br>${item.nama}<br><a href="https://wa.me/${waNumber}" target="_blank" style="color: #16a34a; text-decoration: none; font-size: 0.75rem; font-weight: bold;">💬 Chat WA</a></td>
-                        <td><span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;">${item.kategori}</span><br><div style="margin-top:5px;">${item.uraian}</div></td>
+                        <td><b>#${item.row}</b><br><span style="font-size:0.75rem; color:gray;">${tglDisplay}</span></td>
+                        <td><b>${item.nip}</b><br>${item.nama}<br><a href="https://wa.me/${waNumber}" target="_blank" style="color: #16a34a; text-decoration: none; font-size: 0.85rem; font-weight: bold;">💬 Chat WA</a></td>
+                        <td><span style="background: #e2e8f0; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem;">${item.kategori}</span><br><div style="margin-top:8px;">${item.uraian}</div></td>
                         <td>
                             <select id="status_${item.row}" class="status-select">
                                 <option value="Proses" ${item.status === 'Proses' ? 'selected' : ''}>Proses</option>
