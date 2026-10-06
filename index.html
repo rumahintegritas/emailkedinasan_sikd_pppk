@@ -78,7 +78,7 @@
 </head>
 <body>
 
-    <header>Portal Kredensial & Pusat Bantuan Pegawai</header>
+    <header>Portal Kredensial & Pusat Bantuan PPPK GURU dan Tendik</header>
 
     <div class="marquee-container">
         <div class="marquee-text">
@@ -351,8 +351,8 @@
 
             const storageKey = 'akses_count_' + inputVal;
             let currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
-            if (currentCount >= 3) {
-                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> Anda sudah mengakses 3 kali. Hubungi admin.";
+            if (currentCount >= 20) {
+                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> Anda sudah mengakses berkali-kali. Hubungi admin.";
                 errorMsg.style.display = 'block'; return;
             }
 
