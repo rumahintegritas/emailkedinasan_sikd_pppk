@@ -76,7 +76,7 @@
 
     <div class="marquee-container">
         <div class="marquee-text">
-            Bila terdapat kendala silahkan buat tiket pelaporan kendala yang akan ditangani secara berkala oleh tim teknis kami. Cek status tiket Anda dengan masuk menggunakan NIK.
+            Bila terdapat kendala silahkan buat tiket pelaporan kendala yang akan ditangani secara berkala oleh tim teknis kami. Cek status tiket Anda dengan masuk menggunakan NIP atau NIK.
         </div>
     </div>
 
@@ -86,10 +86,10 @@
             <!-- SECTION 1: LOGIN PEGAWAI & FORM KENDALA -->
             <div id="login-section">
                 <h2>Verifikasi Data Pegawai</h2>
-                <p class="subtitle">Masukkan NIK Anda untuk melihat akun & status tiket.</p>
+                <p class="subtitle">Masukkan NIP atau NIK Anda untuk melihat akun & status tiket.</p>
                 
                 <div class="form-group">
-                    <input type="text" id="searchInput" placeholder="Masukkan NIK Anda di sini...">
+                    <input type="text" id="searchInput" placeholder="Masukkan NIP atau NIK Anda di sini...">
                 </div>
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
@@ -107,8 +107,8 @@
                     <div style="font-size: 1rem; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; text-align: center;">Formulir Laporan Kendala</div>
                     
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>NIK <span style="font-size:0.7rem; color:#64748b; font-weight:normal;">(Ketik NIK lalu klik di luar kotak)</span></label>
-                        <input type="text" id="kendalaNip" placeholder="Masukkan NIK...">
+                        <label>NIP / NIK <span style="font-size:0.7rem; color:#64748b; font-weight:normal;">(Ketik NIP/NIK lalu klik di luar kotak)</span></label>
+                        <input type="text" id="kendalaNip" placeholder="Masukkan NIP atau NIK...">
                         <div id="loadingPegawaiMsg" style="font-size:0.75rem; color:#2563eb; display:none; margin-top:4px;">Mencari data pegawai...</div>
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
@@ -165,7 +165,7 @@
                     
                     <div id="adminResetPanel" style="display: none; margin-top: 12px; background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px dashed #94a3b8;">
                         <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 8px;">Mode Administrator Aktif</div>
-                        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 8px;">1. Reset Limit NIK (Ketikan NIK di atas)</button>
+                        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 8px;">1. Reset Limit NIP/NIK (Ketikan di atas)</button>
                         <button onclick="bukaDashboardMonitoring()" style="background-color: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%;">2. Buka Monitoring Ticketing</button>
                     </div>
                 </div>
@@ -190,9 +190,7 @@
                     <button class="tab-btn" onclick="switchTab('tiket', event)">Status Tiket Saya</button>
                 </div>
 
-                <!-- TAB EMAIL KEDINASAN (DIPERBAIKI) -->
                 <div id="tab-email" class="tab-content active">
-                    <!-- KOTAK USERNAME EMAIL YANG SEBELUMNYA HILANG -->
                     <div class="info-card">
                         <div class="info-label">Username Email Kedinasan</div>
                         <div class="credential-row">
@@ -216,7 +214,6 @@
                     </div>
                 </div>
                 
-                <!-- TAB AKUN SIKD (DIPERBAIKI) -->
                 <div id="tab-sikd" class="tab-content">
                     <div class="info-card">
                         <div class="info-label">Username SIKD</div>
@@ -225,7 +222,6 @@
                             <button class="btn-copy" onclick="copyText('resUserSikd')">Salin</button>
                         </div>
                     </div>
-                    <!-- KOTAK PASSWORD SIKD YANG SEBELUMNYA HILANG -->
                     <div class="info-card">
                         <div class="info-label">Password SIKD</div>
                         <div class="credential-row">
@@ -235,7 +231,6 @@
                     </div>
                 </div>
 
-                <!-- TAB STATUS TIKET -->
                 <div id="tab-tiket" class="tab-content">
                     <p style="font-size: 0.8rem; color: #64748b; margin-top: 0;">Daftar pengaduan kendala yang pernah Anda buat:</p>
                     <div id="listTiketUserContainer"></div>
@@ -257,7 +252,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 50px;">No</th>
-                                <th style="width: 150px;">Pelapor (NIK & Nama)</th>
+                                <th style="width: 150px;">Pelapor (NIP/NIK & Nama)</th>
                                 <th>Kategori & Detail Kendala</th>
                                 <th style="width: 250px;">Status, Petugas, & Solusi</th>
                                 <th style="width: 100px;">Aksi</th>
@@ -310,13 +305,13 @@
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
 
-        // --- FETCH OTOMATIS: AUTO-FILL NAMA & UNIT KERJA SAAT KETIK NIK ---
+        // --- FETCH OTOMATIS: AUTO-FILL NAMA & UNIT KERJA SAAT KETIK NIP/NIK ---
         document.getElementById('kendalaNip').addEventListener('blur', function() {
-            const nikInput = this.value.trim();
+            const idInput = this.value.trim();
             const msgBox = document.getElementById('loadingPegawaiMsg');
-            if(nikInput !== "") {
+            if(idInput !== "") {
                 msgBox.style.display = 'block';
-                fetch(`${SCRIPT_URL}?action=getPegawai&nik=${encodeURIComponent(nikInput)}`)
+                fetch(`${SCRIPT_URL}?action=getPegawai&id=${encodeURIComponent(idInput)}`)
                 .then(res => res.json())
                 .then(data => {
                     msgBox.style.display = 'none';
@@ -344,7 +339,7 @@
             const loadingMsg = document.getElementById('loadingMsg');
 
             if (!inputVal) {
-                errorMsg.innerText = "Masukkan NIK terlebih dahulu.";
+                errorMsg.innerText = "Masukkan NIP atau NIK terlebih dahulu.";
                 errorMsg.style.display = 'block'; return;
             }
 
@@ -358,7 +353,7 @@
             errorMsg.style.display = 'none';
             loadingMsg.style.display = 'block';
 
-            fetch(`${SCRIPT_URL}?action=getPegawai&nik=${encodeURIComponent(inputVal)}`)
+            fetch(`${SCRIPT_URL}?action=getPegawai&id=${encodeURIComponent(inputVal)}`)
             .then(res => res.json())
             .then(data => {
                 loadingMsg.style.display = 'none';
@@ -367,10 +362,9 @@
                     localStorage.setItem(storageKey, currentCount);
                     
                     document.getElementById('resNama').innerText = data.nama;
-                    document.getElementById('resIden').innerText = `NIK: ${data.nik}`;
+                    document.getElementById('resIden').innerText = `NIP/NIK: ${inputVal}`;
                     document.getElementById('resUnitKerja').innerText = `Unit: ${data.unitKerja}`;
                     
-                    // PEMBARUAN: Data Username dan Password yang sebelumnya tersembunyi
                     document.getElementById('resUserEmail').innerText = data.userEmail || "-";
                     document.getElementById('resEmail').innerText = data.email || "-";
                     document.getElementById('resPwdEmail').innerText = data.pwdEmail || "-";
@@ -378,19 +372,19 @@
                     document.getElementById('resUserSikd').innerText = data.userSikd || "-";
                     document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
                     
-                    renderTiketKhususUser(data.tiket); // Render riwayat tiket asli dari sheet
+                    renderTiketKhususUser(data.tiket);
 
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('dashboard-section').style.display = 'block';
                     switchTab('email');
                     document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 } else {
-                    errorMsg.innerText = "NIK tidak ditemukan dalam database.";
+                    errorMsg.innerText = "NIP atau NIK tidak ditemukan dalam database.";
                     errorMsg.style.display = 'block';
                 }
             }).catch(err => {
                 loadingMsg.style.display = 'none';
-                errorMsg.innerText = "Terjadi kesalahan server.";
+                errorMsg.innerText = "Terjadi kesalahan server. Pastikan URL Web App sudah benar.";
                 errorMsg.style.display = 'block';
             });
         }
@@ -400,7 +394,6 @@
             if(!tiketArr || tiketArr.length === 0) {
                 html = `<div style="text-align:center; padding:15px; color:#94a3b8; font-size:0.85rem;">Belum ada riwayat pengaduan tiket.</div>`;
             } else {
-                // Tampilkan dari yang paling baru (terbalik)
                 tiketArr.slice().reverse().forEach((tiket) => {
                     let badgeColor = "#3b82f6"; 
                     if (tiket.status === "Sedang Konfirmasi Lebih Lanjut") badgeColor = "#f59e0b";
@@ -413,7 +406,6 @@
                         balasanFinal += `<br><br><span style="color:#b45309; font-style:italic; font-size:0.75rem;">* Pesan Otomatis: Mohon Maaf atas kendala sebelumnya, tiket anda akan ditutup secara otomatis, silahkan buat kembali tiket pengaduan kendala bila menemukan kendala lainnya.</span>`;
                     }
 
-                    // Format tanggal agar rapi jika berupa ISO string dari Google Sheet
                     let tglDisplay = tiket.tanggal;
                     try { if(tglDisplay.includes('T')) { let d = new Date(tglDisplay); tglDisplay = d.toLocaleString('id-ID'); } } catch(e){}
 
@@ -441,7 +433,7 @@
         function kirimKendalaKeSpreadsheet() {
             const btn = event.target;
             const payload = {
-                nik: document.getElementById('kendalaNip').value.trim(),
+                id: document.getElementById('kendalaNip').value.trim(),
                 nama: document.getElementById('kendalaNama').value.trim(),
                 unitKerja: document.getElementById('kendalaUnitKerja').value.trim(),
                 hp: document.getElementById('kendalaHp').value.trim(),
@@ -453,7 +445,7 @@
             checkboxKategori.forEach((cb) => { kategoriArr.push(cb.value); });
             payload.kategori = kategoriArr.join(", ");
 
-            if (!payload.nik || !payload.nama || !payload.hp || kategoriArr.length === 0 || !payload.uraian) {
+            if (!payload.id || !payload.nama || !payload.hp || kategoriArr.length === 0 || !payload.uraian) {
                 alert("Semua kolom dan minimal satu kategori kendala wajib diisi!"); return;
             }
 
@@ -465,7 +457,7 @@
             })
             .then(res => res.json())
             .then(res => {
-                alert("Tiket Kendala berhasil dibuat! Silakan login kembali dengan NIK Anda untuk memantau status tiket.");
+                alert("Tiket Kendala berhasil dibuat! Silakan login kembali dengan NIP/NIK Anda untuk memantau status tiket.");
                 
                 document.getElementById('kendalaNip').value = '';
                 document.getElementById('kendalaNama').value = '';
@@ -493,9 +485,9 @@
         }
         function adminResetAkses() {
             const inputVal = document.getElementById('searchInput').value.trim();
-            if (!inputVal) { alert("Masukkan NIK di kolom paling atas terlebih dahulu!"); return; }
+            if (!inputVal) { alert("Masukkan NIP/NIK di kolom paling atas terlebih dahulu!"); return; }
             localStorage.removeItem('akses_count_' + inputVal);
-            alert("Sukses! Batas akses NIK tersebut telah direset.");
+            alert("Sukses! Batas akses NIP/NIK tersebut telah direset.");
         }
 
         // --- FETCH: DASHBOARD MONITORING ADMIN ---
@@ -638,7 +630,6 @@
             .then(res => res.json())
             .then(res => {
                 if(st === 'Selesai') {
-                    // Update master data lokal agar langsung hilang dari To-Do
                     const itemIndex = dataKendalaMaster.findIndex(item => item.row === row);
                     if (itemIndex > -1) {
                         dataKendalaMaster[itemIndex].status = 'Selesai';
