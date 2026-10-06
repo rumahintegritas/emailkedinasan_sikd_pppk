@@ -271,7 +271,7 @@
 
     <script>
         // ==========================================
-        // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU
+        // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU HASIL DEPLOY ULANG (ANYONE)
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfn_HbwVcww5iZJ9R5lJ5zaShX5RmxPRk3lHTvPe8g6GMmuCoVkSOTF0k0K8spZ-8U-Q/exec";
         // ==========================================
 
@@ -565,10 +565,19 @@
                     let tglDisplay = item.waktu;
                     try { if(tglDisplay.includes('T')) { let d = new Date(tglDisplay); tglDisplay = d.toLocaleString('id-ID'); } } catch(e){}
 
+                    // PERBAIKAN LOGIKA NOMOR WHATSAPP (Mendeteksi berbagai awalan nomor)
+                    let rawHp = String(item.hp).replace(/\D/g, ''); // bersihkan spasi atau simbol
+                    let waNumber = rawHp;
+                    if (waNumber.startsWith('0')) {
+                        waNumber = '62' + waNumber.substring(1);
+                    } else if (waNumber.startsWith('8')) {
+                        waNumber = '62' + waNumber; // Menangani data lama yang terlanjur tanpa '0' di depannya
+                    }
+
                     html += `
                     <tr>
                         <td><b>#${item.row}</b><br><span style="font-size:0.65rem; color:gray;">${tglDisplay}</span></td>
-                        <td><b>${item.nip}</b><br>${item.nama}<br><a href="https://wa.me/62${String(item.hp).substring(1)}" target="_blank" style="color: #16a34a; text-decoration: none; font-size: 0.75rem; font-weight: bold;">💬 Chat WA</a></td>
+                        <td><b>${item.nip}</b><br>${item.nama}<br><a href="https://wa.me/${waNumber}" target="_blank" style="color: #16a34a; text-decoration: none; font-size: 0.75rem; font-weight: bold;">💬 Chat WA</a></td>
                         <td><span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;">${item.kategori}</span><br><div style="margin-top:5px;">${item.uraian}</div></td>
                         <td>
                             <select id="status_${item.row}" class="status-select">
@@ -611,7 +620,6 @@
             }
         }
 
-        // --- POST: UPDATE TIKET OLEH ADMIN ---
         function simpanUpdate(row) {
             const btn = document.getElementById(`btn_${row}`);
             const st = document.getElementById(`status_${row}`).value;
