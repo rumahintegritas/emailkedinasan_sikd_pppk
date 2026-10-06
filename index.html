@@ -56,6 +56,11 @@
                 </div>
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
+<!-- TAMBAHAN TOMBOL RESET ADMIN -->
+<div style="margin-top: 15px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
+    <span style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 6px;">Menu Khusus Admin / Bantuan</span>
+    <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Reset Batas Akses NIP/KTP Ini</button>
+</div>
                 <div id="loadingMsg" class="loading">Sedang memverifikasi data...</div>
                 <div id="errorMsg" class="error-msg"></div>
             </div>
@@ -221,6 +226,33 @@
                 alert('Berhasil disalin ke clipboard!');
             });
         }
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Berhasil disalin ke clipboard!');
+            });
+        }
+
+        // TAMBAHKAN FUNGSI RESET ADMIN DI SINI
+        function adminResetAkses() {
+            const inputVal = document.getElementById('searchInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!inputVal) {
+                errorMsg.innerText = "Masukkan NIP atau No KTP yang ingin di-reset pada kolom di atas terlebih dahulu.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const storageKey = 'akses_count_' + inputVal;
+            localStorage.removeItem(storageKey);
+            
+            errorMsg.style.background = "#dcfce7";
+            errorMsg.style.color = "#166534";
+            errorMsg.innerText = `Sukses! Batas akses untuk NIP/KTP ${inputVal} telah direset kembali menjadi 0 (bersih).`;
+            errorMsg.style.display = 'block';
+        }
+    </script>
     </script>
 </body>
 </html>
