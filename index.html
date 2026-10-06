@@ -57,9 +57,15 @@
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
 <!-- TAMBAHAN TOMBOL RESET ADMIN -->
+<!-- MENU KHUSUS ADMIN DENGAN KODE PIN -->
 <div style="margin-top: 15px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
     <span style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 6px;">Menu Khusus Admin / Bantuan</span>
-    <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Reset Batas Akses NIP/KTP Ini</button>
+    <button onclick="cekPasswordAdmin()" style="background-color: #475569; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Buka Menu Reset Admin</button>
+    
+    <!-- Tombol Reset Asli (Disembunyikan dulu sampai PIN benar) -->
+    <div id="adminResetPanel" style="display: none; margin-top: 10px;">
+        <button onclick="adminResetAkses()" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Reset Batas Akses NIP/KTP Ini</button>
+    </div>
 </div>
                 <div id="loadingMsg" class="loading">Sedang memverifikasi data...</div>
                 <div id="errorMsg" class="error-msg"></div>
@@ -232,7 +238,15 @@
                 alert('Berhasil disalin ke clipboard!');
             });
         }
-
+function cekPasswordAdmin() {
+            let pin = prompt("Masukkan PIN / Password Khusus Admin:");
+            if (pin === "mutasimutandis321") {
+                document.getElementById('adminResetPanel').style.display = 'block';
+                alert("PIN Benar! Tombol reset telah dimunculkan.");
+            } else if (pin !== null) {
+                alert("PIN Salah! Anda tidak memiliki hak akses admin.");
+            }
+        }
         // TAMBAHKAN FUNGSI RESET ADMIN DI SINI
         function adminResetAkses() {
             const inputVal = document.getElementById('searchInput').value.trim();
