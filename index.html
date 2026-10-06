@@ -170,6 +170,7 @@
                         // Tampilkan hasil ke dashboard
                         document.getElementById('resNama').innerText = data.nama;
                         document.getElementById('resIden').innerText = `NIP: ${data.nip} (Akses ke-${currentCount}/3)`;
+                        document.getElementById('resUserEmail').innerText = data.userEmail || "-";
                         document.getElementById('resEmail').innerText = data.email;
                         document.getElementById('resPwdEmail').innerText = data.pwdEmail;
                         document.getElementById('resUserSikd').innerText = data.userSikd || "-";
