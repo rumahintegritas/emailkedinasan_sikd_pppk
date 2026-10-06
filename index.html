@@ -56,6 +56,37 @@
                 </div>
 
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
+                <!-- TOMBOL MENU BANTUAN KENDALA -->
+<div style="margin-top: 12px; text-align: center;">
+    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: underline;">Punya Kendala / Butuh Bantuan?</button>
+</div>
+
+<!-- FORMULIR PENGADUAN KENDALA (Awalnya disembunyikan) -->
+<div id="bantuanFormPanel" style="display: none; margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; text-align: left;">
+    <div style="font-size: 0.9rem; font-weight: bold; color: #1e3a8a; margin-bottom: 10px; text-align: center;">Formulir Pengaduan Kendala</div>
+    
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem;">NIP / No KTP</label>
+        <input type="text" id="kendalaNip" placeholder="Masukkan NIP/KTP..." style="padding: 8px; font-size: 0.85rem;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem;">Nama Lengkap</label>
+        <input type="text" id="kendalaNama" placeholder="Masukkan Nama..." style="padding: 8px; font-size: 0.85rem;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem;">Nomor WhatsApp / HP</label>
+        <input type="text" id="kendalaHp" placeholder="Contoh: 08123456789" style="padding: 8px; font-size: 0.85rem;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 12px;">
+        <label style="font-size: 0.75rem;">Kendala yang Dialami</label>
+        <textarea id="kendalaPesan" placeholder="Jelaskan kendala Anda..." style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; height: 70px;"></textarea>
+    </div>
+
+    <button onclick="kirimKendalaWhatsApp()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 9px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Kirim Laporan via WhatsApp Admin</button>
+</div>
                 <button onclick="location.reload()" style="width: 100%; background-color: #64748b; color: white; border: none; padding: 9px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 8px;">Muat Ulang Halaman</button>
 <!-- TAMBAHAN TOMBOL RESET ADMIN -->
 <!-- MENU KHUSUS ADMIN DENGAN KODE PIN -->
@@ -267,7 +298,42 @@ function cekPasswordAdmin() {
             errorMsg.innerText = `Sukses! Batas akses untuk NIP/KTP ${inputVal} telah direset kembali menjadi 0 (bersih).`;
             errorMsg.style.display = 'block';
         }
-    </script>
+        // Fungsi untuk memunculkan/menyembunyikan form kendala
+function toggleBantuanForm() {
+    const panel = document.getElementById('bantuanFormPanel');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// Fungsi otomatis merangkai laporan dan mengirimkannya langsung ke WhatsApp Anda
+function kirimKendalaWhatsApp() {
+    const nip = document.getElementById('kendalaNip').value.trim();
+    const nama = document.getElementById('kendalaNama').value.trim();
+    const hp = document.getElementById('kendalaHp').value.trim();
+    const pesan = document.getElementById('kendalaPesan').value.trim();
+
+    if (!nip || !nama || !hp || !pesan) {
+        alert("Mohon lengkapi semua kolom formulir kendala terlebih dahulu!");
+        return;
+    }
+
+    // Ganti nomor di bawah dengan Nomor WhatsApp Admin Anda (awali dengan 62 tanpa angka 0 di depan)
+    const nomorAdminWhatsApp = "6281216305214"; 
+
+    const teksPesan = `Halo Admin, saya ingin melaporkan kendala pada Portal Kredensial:\n\n` +
+                      `*NIP/KTP*: ${nip}\n` +
+                      `*Nama*: ${nama}\n` +
+                      `*No HP/WA*: ${hp}\n` +
+                      `*Kendala*: ${pesan}`;
+
+    const urlWa = `https://wa.me/${nomorAdminWhatsApp}?text=${encodeURIComponent(teksPesan)}`;
+    
+    // Membuka WhatsApp secara otomatis
+    window.open(urlWa, '_blank');
+}
     </script>
 </body>
 </html>
