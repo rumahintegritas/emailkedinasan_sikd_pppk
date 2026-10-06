@@ -190,7 +190,16 @@
                     <button class="tab-btn" onclick="switchTab('tiket', event)">Status Tiket Saya</button>
                 </div>
 
+                <!-- TAB EMAIL KEDINASAN (DIPERBAIKI) -->
                 <div id="tab-email" class="tab-content active">
+                    <!-- KOTAK USERNAME EMAIL YANG SEBELUMNYA HILANG -->
+                    <div class="info-card">
+                        <div class="info-label">Username Email Kedinasan</div>
+                        <div class="credential-row">
+                            <span id="resUserEmail" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resUserEmail')">Salin</button>
+                        </div>
+                    </div>
                     <div class="info-card">
                         <div class="info-label">Alamat Email</div>
                         <div class="credential-row">
@@ -207,6 +216,7 @@
                     </div>
                 </div>
                 
+                <!-- TAB AKUN SIKD (DIPERBAIKI) -->
                 <div id="tab-sikd" class="tab-content">
                     <div class="info-card">
                         <div class="info-label">Username SIKD</div>
@@ -215,8 +225,17 @@
                             <button class="btn-copy" onclick="copyText('resUserSikd')">Salin</button>
                         </div>
                     </div>
+                    <!-- KOTAK PASSWORD SIKD YANG SEBELUMNYA HILANG -->
+                    <div class="info-card">
+                        <div class="info-label">Password SIKD</div>
+                        <div class="credential-row">
+                            <span id="resPwdSikd" class="credential-value">-</span>
+                            <button class="btn-copy" onclick="copyText('resPwdSikd')">Salin</button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- TAB STATUS TIKET -->
                 <div id="tab-tiket" class="tab-content">
                     <p style="font-size: 0.8rem; color: #64748b; margin-top: 0;">Daftar pengaduan kendala yang pernah Anda buat:</p>
                     <div id="listTiketUserContainer"></div>
@@ -258,7 +277,7 @@
     <script>
         // ==========================================
         // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfn_HbwVcww5iZJ9R5lJ5zaShX5RmxPRk3lHTvPe8g6GMmuCoVkSOTF0k0K8spZ-8U-Q/exec";
+        const SCRIPT_URL = "URL_WEB_APP_GOOGLE_SCRIPT_ANDA_YANG_BARU";
         // ==========================================
 
         function kembaliKeHome() {
@@ -350,9 +369,14 @@
                     document.getElementById('resNama').innerText = data.nama;
                     document.getElementById('resIden').innerText = `NIK: ${data.nik}`;
                     document.getElementById('resUnitKerja').innerText = `Unit: ${data.unitKerja}`;
+                    
+                    // PEMBARUAN: Data Username dan Password yang sebelumnya tersembunyi
+                    document.getElementById('resUserEmail').innerText = data.userEmail || "-";
                     document.getElementById('resEmail').innerText = data.email || "-";
                     document.getElementById('resPwdEmail').innerText = data.pwdEmail || "-";
+                    
                     document.getElementById('resUserSikd').innerText = data.userSikd || "-";
+                    document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
                     
                     renderTiketKhususUser(data.tiket); // Render riwayat tiket asli dari sheet
 
