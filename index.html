@@ -276,7 +276,7 @@
     <script>
         // ==========================================
         // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP ANDA YANG BARU
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxle113Hittf3gmU2_WiEXSeJDGElat-H1voI53SHrgeDjRJyVwBQfrcuGSFswMNLS8xA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9R1_hfXvo2xdCeGd7GNZXUzDfS8IV9fkDhCxKGFeBgQsoX3Tb1aL1anRP9tymCWd8AQ/exec";
         // ==========================================
 
         function kembaliKeHome() {
@@ -481,16 +481,35 @@
             });
         }
 
-        // --- FUNGSI ADMIN DENGAN PIN YANG DISAMARKAN ---
-     function cekPasswordAdmin() {
-         let pin = prompt("Masukkan PIN Administrator:");
-         // PIN disamarkan menggunakan Base64 Encoding
-         if (pin && btoa(pin) === "bXV0YXNpbXV0YW5kaXMzMjE=") {
-             document.getElementById('adminResetPanel').style.display = 'block';
-         } else if (pin !== null) {
-             alert("Akses Ditolak! PIN Salah.");
-         }
-     }
+        // --- FUNGSI ADMIN TERSEMBUNYI (VERIFIKASI SERVER) ---
+        function cekPasswordAdmin() {
+            let pin = prompt("Masukkan PIN Administrator:");
+            if (!pin) return;
+
+            let btn = event.target;
+            let originalText = btn.innerText;
+            btn.innerText = "Memverifikasi...";
+            btn.style.backgroundColor = "#94a3b8";
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "verifyPin", pin: pin })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "#475569";
+                if (data.status === "success") {
+                    document.getElementById('adminResetPanel').style.display = 'block';
+                } else {
+                    alert("Akses Ditolak! PIN Salah.");
+                }
+            }).catch(err => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "#475569";
+                alert("Gagal terhubung ke server verifikasi.");
+            });
+        }
         function adminResetAkses() {
             const inputVal = document.getElementById('searchInput').value.trim();
             if (!inputVal) { alert("Masukkan NIP/NIK di kolom paling atas terlebih dahulu!"); return; }
