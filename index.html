@@ -563,27 +563,45 @@
             }
         }
 
+        // --- VARIABEL FILTER AKTIF ---
+        let currentKategoriAdmin = 'Total To-Do'; 
+
         function filterTabelAdmin() {
+            jalankanPencarianDanFilter();
+        }
+
+        function filterKendala(kategoriDipilih) {
+            currentKategoriAdmin = kategoriDipilih;
+            document.getElementById('statusLoadMonitoring').innerText = `Menampilkan To-Do: ${kategoriDipilih}`;
+            jalankanPencarianDanFilter();
+        }
+
+        function jalankanPencarianDanFilter() {
             let inputRaw = document.getElementById("searchInputAdmin").value.toLowerCase();
             let arrayKataKunci = inputRaw.split(';').map(kata => kata.trim()).filter(kata => kata !== "");
             
-            let barisPersonal = document.getElementsByClassName("baris-p");
-            let barisMassal = document.getElementsByClassName("baris-m");
-            
-            for (let i = 0; i < barisPersonal.length; i++) {
-                let teks = barisPersonal[i].innerText.toLowerCase();
-                let cocok = false;
-                if (arrayKataKunci.length === 0) {
-                    cocok = true;
-                } else {
-                    cocok = arrayKataKunci.some(kata => teks.includes(kata));
-                }
-                
-                barisPersonal[i].style.display = cocok ? "" : "none";
-                barisMassal[i].style.display = cocok ? "" : "none";
-                
-                if(!cocok) barisMassal[i].querySelector(".chk-massal").checked = false;
+            // 1. Ambil seluruh tiket dari master data
+            let tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
+
+            // 2. Filter berdasarkan Tombol Kategori Biru
+            if (currentKategoriAdmin !== "Total To-Do") {
+                tiketAktif = tiketAktif.filter(item => item.kategori.includes(currentKategoriAdmin));
             }
+
+            // 3. Pencarian Cerdas (Meliputi NIP, Nama, Kategori, dan URAIAN Kendala)
+            if (arrayKataKunci.length > 0) {
+                tiketAktif = tiketAktif.filter(item => {
+                    // Menggabungkan seluruh variabel ke dalam satu teks panjang
+                    let teksItem = `${item.nip} ${item.nama} ${item.kategori} ${item.uraian}`.toLowerCase();
+                    // Tampilkan baris jika teks panjang tersebut mengandung kata kunci
+                    return arrayKataKunci.some(kata => teksItem.includes(kata));
+                });
+            }
+
+            // 4. Perbarui tabel dengan hasil saringan
+            dataFiltered = tiketAktif;
+            currentPage = 1; 
+            renderTabelKendala();
         }
 
         function pilihSemua() {
@@ -646,18 +664,7 @@
             document.getElementById('rekapKendalaPanel').innerHTML = html;
         }
 
-        function filterKendala(kategoriDipilih) {
-            document.getElementById('statusLoadMonitoring').innerText = `Menampilkan To-Do: ${kategoriDipilih}`;
-            const tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
-
-            if (kategoriDipilih === "Total To-Do") {
-                dataFiltered = [...tiketAktif];
-            } else {
-                dataFiltered = tiketAktif.filter(item => item.kategori.includes(kategoriDipilih));
-            }
-            currentPage = 1; 
-            renderTabelKendala();
-        }
+        
 
         function renderTabelKendala() {
             const startIndex = (currentPage - 1) * rowsPerPage;
@@ -722,7 +729,7 @@
             document.getElementById('tabelMassalBody').innerHTML = htmlMassal;
             
             // Reset kotak pencarian
-            document.getElementById("searchInputAdmin").value = '';
+            
             document.getElementById("checkSemua").checked = false;
             
             renderPagination(); 
