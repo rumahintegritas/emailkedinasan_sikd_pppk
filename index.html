@@ -685,6 +685,66 @@
                 btn.style.backgroundColor = "#16a34a";
             });
         }
+        // Ganti teks di bawah dengan URL Web App baru Anda
+const scriptURL = 'PASTE_URL_WEB_APP_BARU_ANDA_DISINI';
+
+function eksekusiMassal() {
+    let checkboxes = document.getElementsByClassName("chk-massal");
+    let teksJawaban = document.getElementById("teksJawabanMassal").value.trim();
+    let namaPetugas = document.getElementById("namaPetugasMassal").value.trim();
+    
+    let tiketTerpilih = [];
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            // Memasukkan 'Waktu' (ID Tiket) dari checkbox yang dicentang
+            tiketTerpilih.push(checkboxes[i].value);
+        }
+    }
+
+    if (tiketTerpilih.length === 0) return alert("Centang minimal 1 tiket di tabel!");
+    if (teksJawaban === "") return alert("Kotak jawaban tidak boleh kosong!");
+    if (namaPetugas === "") return alert("Mohon isi Nama Petugas!");
+
+    if (confirm(`Apakah Anda yakin ingin menyelesaikan ${tiketTerpilih.length} tiket ini sekaligus?`)) {
+        
+        // Mengubah tombol menjadi status loading
+        let btnMassal = document.querySelector('.btn-massal');
+        btnMassal.innerText = "⏳ Sedang Memproses...";
+        btnMassal.disabled = true;
+
+        // Menyiapkan paket data (payload) untuk dikirim ke Google Script
+        let payload = {
+            action: 'bulkUpdate',
+            waktuTiket: tiketTerpilih,
+            jawaban: teksJawaban,
+            petugas: namaPetugas
+        };
+
+        // Mengirim data menggunakan metode POST
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                // Muat ulang halaman agar tabel menampilkan status terbaru
+                window.location.reload(); 
+            } else {
+                alert("Gagal memproses data: " + data.message);
+            }
+        })
+        .catch(error => {
+            alert("Terjadi kesalahan jaringan: " + error);
+        })
+        .finally(() => {
+            // Mengembalikan status tombol
+            btnMassal.innerText = "🚀 Selesaikan Terpilih";
+            btnMassal.disabled = false;
+        });
+    }
+}
     </script>
 </body>
 </html>
