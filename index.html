@@ -168,7 +168,7 @@
                         <textarea id="kendalaUraian" placeholder="Ceritakan detail masalah yang Anda alami..." style="height: 100px; resize: vertical;"></textarea>
                     </div>
 
-                    <button onclick="kirimKendalaKeSpreadsheet()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer;">Kirim Tiket Laporan</button>
+                    <button id="btnKirimTiket" onclick="kirimKendalaKeSpreadsheet()" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer;">Kirim Tiket Laporan</button>
                 </div>
 
                 <!-- MENU KHUSUS ADMIN -->
@@ -509,7 +509,33 @@
                     msgBox.style.display = 'none';
                     if(data.status === "success") {
                         document.getElementById('kendalaNama').value = data.nama;
-                        document.getElementById('kendalaEmail').value = data.email || "-"; 
+                        document.getElementById('kendalaEmail').value = data.email || "-";
+                        // ==========================================
+                        // BLOKIR TOMBOL KIRIM JIKA ADA TIKET AKTIF
+                        // ==========================================
+                        let btnKirim = document.getElementById("btnKirimTiket");
+                        let adaTiketAktif = false;
+                        
+                        if (data.tiket && data.tiket.length > 0) {
+                            for (let i = 0; i < data.tiket.length; i++) {
+                                if (data.tiket[i].status.toLowerCase() !== "selesai") {
+                                    adaTiketAktif = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (adaTiketAktif) {
+                            alert("Sistem mendeteksi Anda masih memiliki tiket yang sedang diproses. Anda tidak dapat mengirim tiket baru.");
+                            btnKirim.disabled = true;
+                            btnKirim.style.backgroundColor = "#94a3b8"; // Berubah abu-abu
+                            btnKirim.innerText = "Tidak Bisa Mengirim (Ada Tiket Aktif)";
+                        } else {
+                            btnKirim.disabled = false;
+                            btnKirim.style.backgroundColor = "#16a34a"; // Hijau normal
+                            btnKirim.innerText = "Kirim Tiket Laporan";
+                        }
+                        // ==========================================
                     } else {
                         document.getElementById('kendalaNama').value = "Data tidak ditemukan";
                         document.getElementById('kendalaEmail').value = "-"; 
