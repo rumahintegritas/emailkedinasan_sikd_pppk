@@ -920,6 +920,30 @@
                 });
             }
         }
+        // ==========================================
+        // SISTEM ANTI-INTIP (BLOKIR KLIK KANAN & SHORTCUT)
+        // ==========================================
+        
+        // 1. Memblokir Klik Kanan
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Memblokir tombol F12, Ctrl+U, dan kombinasi Inspect Element
+        document.addEventListener('keydown', function(e) {
+            // Blokir F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+            }
+            // Blokir Ctrl+U (View Source)
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                e.preventDefault();
+            }
+            // Blokir Ctrl+Shift+I / J / C (Developer Tools)
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
