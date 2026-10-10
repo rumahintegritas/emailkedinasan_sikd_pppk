@@ -96,7 +96,22 @@
                 <div class="form-group">
                     <input type="text" id="searchInput" placeholder="Masukkan NIP atau NIK Anda di sini...">
                 </div>
+                <div class="form-group">
+                    <input type="text" id="searchInput" placeholder="Masukkan NIP atau NIK Anda di sini...">
+                </div>
 
+                <!-- --- MULAI KODE CAPTCHA --- -->
+                <div class="form-group" style="background: #e0f2fe; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; text-align: center;">
+                    <label style="color: #0369a1; font-size: 0.95rem; margin-bottom: 10px;">Ketik kode keamanan di bawah ini:</label>
+                    <div style="margin-bottom: 10px;">
+                        <canvas id="captchaCanvas" width="160" height="55" style="background: white; border-radius: 4px; border: 1px dashed #94a3b8; letter-spacing: 5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);"></canvas>
+                    </div>
+                    <input type="text" id="captchaInput" placeholder="Ketik kode di sini..." style="text-align: center; font-weight: bold; font-size: 1.1rem; text-transform: uppercase;">
+                    <button type="button" onclick="buatCaptcha()" style="background: none; border: none; color: #0284c7; cursor: pointer; font-size: 0.85rem; font-weight: bold; text-decoration: underline; margin-top: 10px; padding: 0;">🔄 Ganti Kode Lain</button>
+                </div>
+                <!-- --- AKHIR KODE CAPTCHA --- -->
+
+                <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
                 <button class="btn-main" onclick="handleLogin()">Masuk & Lihat Akun</button>
                 <button onclick="location.reload()" style="width: 100%; background-color: #64748b; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px;">Muat Ulang Halaman</button>
                 
@@ -308,7 +323,42 @@
         // URL WEB APP UTAMA ANDA
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4nqdyPWSf43uEXPSvTAf_TmdlfAIjrqNt3pXe62SQTN8nSSTirqcadlFvaMULxlQF/exec";
         // ==========================================
+        // ==========================================
+        // SISTEM CAPTCHA CANVAS
+        // ==========================================
+        let captchaJawabanBenar = "";
 
+        function buatCaptcha() {
+            const canvas = document.getElementById('captchaCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const karakter = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; 
+            captchaJawabanBenar = "";
+            for (let i = 0; i < 5; i++) {
+                captchaJawabanBenar += karakter.charAt(Math.floor(Math.random() * karakter.length));
+            }
+            
+            ctx.font = "bold 26px Arial";
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText(captchaJawabanBenar, 30, 38);
+            
+            for(let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.strokeStyle = "#94a3b8";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+            document.getElementById('captchaInput').value = '';
+        }
+
+        // Jalankan saat halaman pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', buatCaptcha);
+        // ==========================================
         function kembaliKeHome() {
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('monitoring-section').style.display = 'none';
@@ -316,6 +366,82 @@
             document.getElementById('mainContainer').classList.remove('admin-wide');
             document.getElementById('searchInput').value = '';
             document.getElementById('errorMsg').style.display = 'none';
+            
+            // Generate CAPTCHA baru setiap kali kembali ke halaman login
+            buatCaptcha(); 
+        }
+
+        // --- FETCH: LOGIN PEGAWAI & RENDER TIKET ---
+        function handleLogin() {
+            const inputVal = document.getElementById('searchInput').value.trim();
+            const captchaVal = document.getElementById('captchaInput').value.trim(); // Ambil nilai CAPTCHA
+            const errorMsg = document.getElementById('errorMsg');
+            const loadingMsg = document.getElementById('loadingMsg');
+
+            // 1. Cek NIP Kosong
+            if (!inputVal) {
+                errorMsg.innerText = "Masukkan NIP atau NIK terlebih dahulu.";
+                errorMsg.style.display = 'block'; return;
+            }
+
+            // 2. Cek CAPTCHA
+            if (!captchaVal) {
+                errorMsg.innerText = "Silakan masukkan kode CAPTCHA terlebih dahulu.";
+                errorMsg.style.display = 'block'; return;
+            }
+            if (captchaVal.toUpperCase() !== captchaJawabanBenar) {
+                errorMsg.innerText = "Kode keamanan salah! Silakan coba lagi.";
+                errorMsg.style.display = 'block';
+                buatCaptcha(); // Acak ulang kodenya karena pengguna salah menebak
+                return;
+            }
+
+            // 3. Lanjut ke proses cek kuota login (kode eksisting Anda)
+            const storageKey = 'akses_count_' + inputVal;
+            let currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
+            
+            if (currentCount >= 50) {
+                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> Anda sudah maksimal mengakses 50 kali. Hubungi admin.";
+                errorMsg.style.display = 'block'; return;
+            }
+
+            errorMsg.style.display = 'none';
+            loadingMsg.style.display = 'block';
+
+            fetch(`${SCRIPT_URL}?action=getPegawai&id=${encodeURIComponent(inputVal)}`)
+            .then(res => res.json())
+            .then(data => {
+                loadingMsg.style.display = 'none';
+                if(data.status === "success") {
+                    currentCount++;
+                    localStorage.setItem(storageKey, currentCount);
+                    
+                    document.getElementById('resNama').innerText = data.nama;
+                    document.getElementById('resIden').innerHTML = `NIP: ${data.nip}<br>NIK: ${data.nik}`;
+                    document.getElementById('resUnitKerja').innerText = `Unit: ${data.unitKerja}`;
+                    
+                    document.getElementById('resUserEmail').innerText = data.userEmail || "-";
+                    document.getElementById('resEmail').innerText = data.email || "-";
+                    document.getElementById('resPwdEmail').innerText = data.pwdEmail || "-";
+                    
+                    document.getElementById('resUserSikd').innerText = data.userSikd || "-";
+                    document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
+                    
+                    renderTiketKhususUser(data.tiket);
+
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard-section').style.display = 'block';
+                    switchTab('email');
+                    document.getElementById('dashboard-section').querySelectorAll('.tab-btn')[0].classList.add('active');
+                } else {
+                    errorMsg.innerText = "NIP atau NIK tidak ditemukan dalam database.";
+                    errorMsg.style.display = 'block';
+                }
+            }).catch(err => {
+                loadingMsg.style.display = 'none';
+                errorMsg.innerText = "Terjadi kesalahan pastikan NIP/NIK sudah benar.";
+                errorMsg.style.display = 'block';
+            });
         }
 
         function copyText(elementId) {
@@ -368,63 +494,7 @@
             }
         });
 
-        // --- FETCH: LOGIN PEGAWAI & RENDER TIKET ---
-        function handleLogin() {
-            const inputVal = document.getElementById('searchInput').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-            const loadingMsg = document.getElementById('loadingMsg');
-
-            if (!inputVal) {
-                errorMsg.innerText = "Masukkan NIP atau NIK terlebih dahulu.";
-                errorMsg.style.display = 'block'; return;
-            }
-
-            const storageKey = 'akses_count_' + inputVal;
-            let currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
-            
-            if (currentCount >= 50) {
-                errorMsg.innerHTML = "<strong>Akses Dibatasi!</strong> Anda sudah maksimal mengakses 50 kali. Hubungi admin.";
-                errorMsg.style.display = 'block'; return;
-            }
-
-            errorMsg.style.display = 'none';
-            loadingMsg.style.display = 'block';
-
-            fetch(`${SCRIPT_URL}?action=getPegawai&id=${encodeURIComponent(inputVal)}`)
-            .then(res => res.json())
-            .then(data => {
-                loadingMsg.style.display = 'none';
-                if(data.status === "success") {
-                    currentCount++;
-                    localStorage.setItem(storageKey, currentCount);
-                    
-                    document.getElementById('resNama').innerText = data.nama;
-                    document.getElementById('resIden').innerHTML = `NIP: ${data.nip}<br>NIK: ${data.nik}`;
-                    document.getElementById('resUnitKerja').innerText = `Unit: ${data.unitKerja}`;
-                    
-                    document.getElementById('resUserEmail').innerText = data.userEmail || "-";
-                    document.getElementById('resEmail').innerText = data.email || "-";
-                    document.getElementById('resPwdEmail').innerText = data.pwdEmail || "-";
-                    
-                    document.getElementById('resUserSikd').innerText = data.userSikd || "-";
-                    document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
-                    
-                    renderTiketKhususUser(data.tiket);
-
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('dashboard-section').style.display = 'block';
-                    switchTab('email');
-                    document.getElementById('dashboard-section').querySelectorAll('.tab-btn')[0].classList.add('active');
-                } else {
-                    errorMsg.innerText = "NIP atau NIK tidak ditemukan dalam database.";
-                    errorMsg.style.display = 'block';
-                }
-            }).catch(err => {
-                loadingMsg.style.display = 'none';
-                errorMsg.innerText = "Terjadi kesalahan pastikan NIP/NIK sudah benar.";
-                errorMsg.style.display = 'block';
-            });
-        }
+        
 
         function renderTiketKhususUser(tiketArr) {
             let html = "";
