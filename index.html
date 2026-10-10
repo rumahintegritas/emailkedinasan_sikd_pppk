@@ -117,7 +117,15 @@
                 <div id="errorMsg" class="error-msg"></div>
 
                 <div style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                    <button onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 1.05rem; font-weight: bold; cursor: pointer; text-decoration: underline;">Mengalami Kendala? Buat Tiket Bantuan</button>
+                    
+                    <!-- PESAN PERINGATAN (Awalnya disembunyikan) -->
+                    <div id="peringatanTiketAktif" style="display: none; background-color: #fef2f2; border: 1px solid #f87171; color: #b91c1c; padding: 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; margin-bottom: 15px;">
+                        ⚠️ Anda masih memiliki tiket yang sedang diproses. Harap tunggu hingga selesai sebelum membuat tiket baru.
+                    </div>
+
+                    <!-- TOMBOL BUAT TIKET -->
+                    <button id="btnBuatTiket" onclick="toggleBantuanForm()" style="background: none; border: none; color: #2563eb; font-size: 1.05rem; font-weight: bold; cursor: pointer; text-decoration: underline;">Mengalami Kendala? Buat Tiket Bantuan</button>
+                
                 </div>
 
                 <!-- FORMULIR PENGADUAN KENDALA -->
@@ -426,7 +434,31 @@
                     document.getElementById('resPwdSikd').innerText = data.pwdSikd || "-";
                     
                     renderTiketKhususUser(data.tiket);
+            // ==========================================
+                    // SISTEM PENCEGAH SPAM TIKET GANDA
+                    // ==========================================
+                    let adaTiketAktif = false;
+                    
+                    if (data.tiket && data.tiket.length > 0) {
+                        for (let i = 0; i < data.tiket.length; i++) {
+                            let statusTiket = data.tiket[i].status.toLowerCase(); 
+                            // Jika ada 1 saja tiket yang statusnya BUKAN selesai, blokir!
+                            if (statusTiket !== "selesai") {
+                                adaTiketAktif = true;
+                                break; 
+                            }
+                        }
+                    }
 
+                    if (adaTiketAktif) {
+                        document.getElementById("btnBuatTiket").style.display = "none";
+                        document.getElementById("peringatanTiketAktif").style.display = "block";
+                        document.getElementById("bantuanFormPanel").style.display = "none"; 
+                    } else {
+                        document.getElementById("btnBuatTiket").style.display = "inline-block";
+                        document.getElementById("peringatanTiketAktif").style.display = "none";
+                    }
+                    // ==========================================
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('dashboard-section').style.display = 'block';
                     switchTab('email');
