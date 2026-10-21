@@ -74,6 +74,10 @@
 
         footer { text-align: center; padding: 15px; font-size: 0.85rem; color: #64748b; }
     </style>
+    <!-- LIBRARY UNTUK CETAK EXCEL DAN PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -333,7 +337,17 @@
                 </div>
 
                 <!-- KOLOM PENCARIAN CERDAS ADMIN -->
-                <input type="text" id="searchInputAdmin" class="petugas-input" style="font-size: 1rem; padding: 12px; margin-bottom: 15px; box-sizing:border-box;" placeholder="Cari NIP, Email, atau keluhan. Pisahkan dengan titik koma (;) untuk mencari banyak data..." onkeyup="filterTabelAdmin()">
+                <!-- KOLOM PENCARIAN CERDAS & TOMBOL CETAK ADMIN -->
+<div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: stretch; flex-wrap: wrap;">
+    <input type="text" id="searchInputAdmin" class="petugas-input" style="font-size: 1rem; padding: 12px; margin-bottom: 0; box-sizing:border-box; flex: 1; min-width: 250px;" placeholder="Cari NIP, Email, atau keluhan. Pisahkan dengan titik koma (;)..." onkeyup="filterTabelAdmin()">
+    
+    <button onclick="cetakExcel()" style="background-color: #10b981; color: white; border: none; padding: 0 16px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        📊 Cetak Excel
+    </button>
+    <button onclick="cetakPDF()" style="background-color: #ef4444; color: white; border: none; padding: 0 16px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        📄 Cetak PDF
+    </button>
+</div>
 
                 <!-- MODE JAWAB PERSONAL (TABEL EKSISTING ANDA) -->
                 <div id="tabPersonalAdmin" class="tab-content active">
@@ -1069,6 +1083,105 @@
                 e.preventDefault();
             }
         });
+        // ==========================================
+// FITUR CETAK EXCEL & PDF OTOMATIS RAPI (CENTERED)
+// ==========================================
+
+function bersihkanTeksHTML(htmlString) {
+    if (!htmlString) return "-";
+    var div = document.createElement("div");
+    div.innerHTML = htmlString;
+    return div.textContent || div.innerText || "";
+}
+
+// 1. FUNGSI CETAK EXCEL
+function cetakExcel() {
+    if (typeof dataFiltered === 'undefined' || dataFiltered.length === 0) {
+        alert("Tidak ada data untuk dicetak pada filter ini.");
+        return;
+    }
+
+    const excelData = dataFiltered.map((item, index) => ({
+        "No": index + 1,
+        "Waktu Lapor": item.waktu,
+        "NIP / NIK": item.nip,
+        "Nama & Unit Kerja": bersihkanTeksHTML(item.nama),
+        "Nomor HP / WA": item.hp,
+        "Kategori Kendala": item.kategori,
+        "Uraian Kendala": bersihkanTeksHTML(item.uraian),
+        "Status": item.status
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const wscols = [{wch: 5}, {wch: 20}, {wch: 20}, {wch: 35}, {wch: 15}, {wch: 25}, {wch: 60}, {wch: 15}];
+    worksheet['!cols'] = wscols;
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Kendala");
+    
+    let namaFile = `Rekap_Kendala_${currentKategoriAdmin.replace(/\s+/g, '_')}.xlsx`;
+    XLSX.writeFile(workbook, namaFile);
+}
+
+// 2. FUNGSI CETAK PDF (DENGAN JUDUL CENTER)
+function cetakPDF() {
+    if (typeof dataFiltered === 'undefined' || dataFiltered.length === 0) {
+        alert("Tidak ada data untuk dicetak pada filter ini.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape'); 
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Judul Kop Dokumen (Rata Tengah)
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Rekapitulasi Tiket Kendala: ${currentKategoriAdmin}`, pageWidth / 2, 15, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, pageWidth / 2, 22, { align: 'center' });
+
+    // Persiapkan Data
+    const tableData = dataFiltered.map((item, index) => {
+        let tglStr = String(item.waktu);
+        if(tglStr.includes('T')) tglStr = tglStr.substring(0, 16).replace('T', ' ');
+        return [
+            index + 1,
+            tglStr,
+            item.nip,
+            bersihkanTeksHTML(item.nama),
+            item.kategori,
+            bersihkanTeksHTML(item.uraian)
+        ];
+    });
+
+    // Cetak Tabel
+    doc.autoTable({
+        startY: 28,
+        head: [['No', 'Waktu', 'NIP/NIK', 'Nama Pegawai', 'Kategori Kendala', 'Uraian Detail']],
+        body: tableData,
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 3 },
+        headStyles: { 
+            fillColor: [30, 58, 138], 
+            halign: 'center', // Membuat Judul Header Rata Tengah
+            valign: 'middle'
+        }, 
+        columnStyles: {
+            0: { cellWidth: 10, halign: 'center' }, // Nomor urut rata tengah
+            1: { cellWidth: 25, halign: 'center' }, // Waktu rata tengah
+            2: { cellWidth: 35, halign: 'center' }, // NIP rata tengah
+            3: { cellWidth: 50 },
+            4: { cellWidth: 40, halign: 'center' }, // Kategori rata tengah
+            5: { cellWidth: 'auto' } 
+        }
+    });
+
+    let namaFile = `Rekap_Kendala_${currentKategoriAdmin.replace(/\s+/g, '_')}.pdf`;
+    doc.save(namaFile);
+}
     </script>
 </body>
 </html>
