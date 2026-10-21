@@ -1091,7 +1091,10 @@ function bersihkanTeksHTML(htmlString) {
     if (!htmlString) return "-";
     var div = document.createElement("div");
     div.innerHTML = htmlString;
-    return div.textContent || div.innerText || "";
+    var teksTersaring = div.textContent || div.innerText || "";
+    
+    // Memaksa spasi aneh bawaan copy-paste menjadi spasi normal yang bisa dipotong turun ke bawah
+    return teksTersaring.replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim();
 }
 
 // 1. FUNGSI CETAK EXCEL
