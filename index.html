@@ -1089,12 +1089,17 @@
 
 function bersihkanTeksHTML(htmlString) {
     if (!htmlString) return "-";
+    
+    // 1. Ubah tag <br> menjadi karakter enter (\n) agar turun baris
+    let teksDiolah = String(htmlString).replace(/<br\s*\/?>/gi, "\n");
+    
+    // 2. Ekstrak teks murni
     var div = document.createElement("div");
-    div.innerHTML = htmlString;
+    div.innerHTML = teksDiolah;
     var teksTersaring = div.textContent || div.innerText || "";
     
-    // Memaksa spasi aneh bawaan copy-paste menjadi spasi normal yang bisa dipotong turun ke bawah
-    return teksTersaring.replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim();
+    // 3. Bersihkan spasi aneh tanpa merusak karakter enter (\n)
+    return teksTersaring.replace(/\u00A0/g, " ").replace(/[ \t]+/g, " ").trim();
 }
 
 // 1. FUNGSI CETAK EXCEL
