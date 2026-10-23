@@ -343,6 +343,11 @@
 <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: stretch; flex-wrap: wrap;">
     <input type="text" id="searchInputAdmin" class="petugas-input" style="font-size: 1rem; padding: 12px; margin-bottom: 0; box-sizing:border-box; flex: 1; min-width: 250px;" placeholder="Cari NIP, Email, atau keluhan. Pisahkan dengan titik koma (;)..." onkeyup="filterTabelAdmin()">
     
+    <label style="display: flex; align-items: center; background-color: #f1f5f9; padding: 0 12px; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; font-size: 0.9rem; font-weight: bold; color: #334155;">
+        <input type="checkbox" id="cekCetakSelesai" style="margin-right: 6px;">
+        Cetak Termasuk Selesai
+    </label>
+    
     <button onclick="cetakExcel()" style="background-color: #10b981; color: white; border: none; padding: 0 16px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;">
         📊 Cetak Excel
     </button>
@@ -1103,15 +1108,33 @@ function bersihkanTeksHTML(htmlString) {
     // 3. Bersihkan spasi aneh tanpa merusak karakter enter (\n)
     return teksTersaring.replace(/\u00A0/g, " ").replace(/[ \t]+/g, " ").trim();
 }
+function ambilDataCetak() {
+    let cb = document.getElementById("cekCetakSelesai");
+    if (!cb || !cb.checked) return dataFiltered;
 
+    let tiketCetak = dataKendalaMaster;
+    
+    if (typeof currentKategoriAdmin !== 'undefined' && currentKategoriAdmin !== "Total To-Do") {
+        tiketCetak = tiketCetak.filter(item => item.kategori.includes(currentKategoriAdmin));
+    }
+    
+    let kataKunci = document.getElementById("searchInputAdmin").value.toLowerCase().split(';').map(k => k.trim()).filter(k => k !== "");
+    if (kataKunci.length > 0) {
+        tiketCetak = tiketCetak.filter(item => {
+            let teks = `${item.nip} ${item.nama} ${item.kategori} ${item.uraian}`.toLowerCase();
+            return kataKunci.some(k => teks.includes(k));
+        });
+    }
+    return tiketCetak;
+}
 // 1. FUNGSI CETAK EXCEL
 function cetakExcel() {
-    if (typeof dataFiltered === 'undefined' || dataFiltered.length === 0) {
+    if (ambilDataCetak().length === 0) {
         alert("Tidak ada data untuk dicetak pada filter ini.");
         return;
     }
 
-    const excelData = dataFiltered.map((item, index) => ({
+    const excelData = ambilDataCetak().map((item, index) => ({
         "No": index + 1,
         "Waktu Lapor": item.waktu,
         "NIP / NIK": item.nip,
@@ -1135,7 +1158,7 @@ function cetakExcel() {
 
 // 2. FUNGSI CETAK PDF (DENGAN JUDUL CENTER)
 function cetakPDF() {
-    if (typeof dataFiltered === 'undefined' || dataFiltered.length === 0) {
+    if (ambilDataCetak().length === 0)
         alert("Tidak ada data untuk dicetak pada filter ini.");
         return;
     }
@@ -1154,7 +1177,7 @@ function cetakPDF() {
     doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, pageWidth / 2, 22, { align: 'center' });
 
     // Persiapkan Data
-    const tableData = dataFiltered.map((item, index) => {
+    const tableData = ambilDataCetak().map((item, index) => {
         let tglStr = String(item.waktu);
         if(tglStr.includes('T')) tglStr = tglStr.substring(0, 16).replace('T', ' ');
         return [
