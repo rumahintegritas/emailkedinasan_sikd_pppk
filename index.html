@@ -789,13 +789,15 @@
             document.getElementById('statusLoadMonitoring').innerText = `Menampilkan To-Do: ${kategoriDipilih}`;
             jalankanPencarianDanFilter();
         }
-
-        function jalankanPencarianDanFilter() {
+    function jalankanPencarianDanFilter() {
             let inputRaw = document.getElementById("searchInputAdmin").value.toLowerCase();
             let arrayKataKunci = inputRaw.split(';').map(kata => kata.trim()).filter(kata => kata !== "");
             
-            // 1. Ambil seluruh tiket dari master data
-            let tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
+            // 1. Ambil seluruh tiket aktif DAN saring hanya yang kategorinya masuk KATEGORI_RESMI
+            let tiketAktif = dataKendalaMaster.filter(item => {
+                if (item.status === "Selesai") return false;
+                return KATEGORI_RESMI.some(katResmi => item.kategori.includes(katResmi));
+            });
 
             // 2. Filter berdasarkan Tombol Kategori Biru
             if (currentKategoriAdmin !== "Total To-Do") {
@@ -805,9 +807,7 @@
             // 3. Pencarian Cerdas (Meliputi NIP, Nama, Kategori, dan URAIAN Kendala)
             if (arrayKataKunci.length > 0) {
                 tiketAktif = tiketAktif.filter(item => {
-                    // Menggabungkan seluruh variabel ke dalam satu teks panjang
                     let teksItem = `${item.nip} ${item.nama} ${item.kategori} ${item.uraian}`.toLowerCase();
-                    // Tampilkan baris jika teks panjang tersebut mengandung kata kunci
                     return arrayKataKunci.some(kata => teksItem.includes(kata));
                 });
             }
@@ -834,7 +834,7 @@
         let dataFiltered = [];
         let currentPage = 1;
         const rowsPerPage = 20;
-
+        const KATEGORI_RESMI = ["AKTIVASI EMAIL DINAS", "AKTIVASI BSRE", "AKTIVASI SIKD"];
         function bukaDashboardMonitoring() {
             document.getElementById('mainContainer').classList.add('admin-wide');
             document.getElementById('login-section').style.display = 'none';
@@ -856,14 +856,22 @@
                 statusMsg.innerText = "Koneksi ke Sheet terputus.";
             });
         }
+    function renderRekapitulasi() {
+            // Filter hanya tiket yang belum selesai DAN kategorinya ada di daftar resmi
+            const tiketAktif = dataKendalaMaster.filter(item => {
+                if (item.status === "Selesai") return false;
+                return KATEGORI_RESMI.some(katResmi => item.kategori.includes(katResmi));
+            });
 
-        function renderRekapitulasi() {
-            const tiketAktif = dataKendalaMaster.filter(item => item.status !== "Selesai");
             const rekap = { "Total To-Do": tiketAktif.length };
             
             tiketAktif.forEach(item => {
                 const arrKategori = item.kategori.split(', ');
-                arrKategori.forEach(kat => { rekap[kat] = (rekap[kat] || 0) + 1; });
+                arrKategori.forEach(kat => { 
+                    if (KATEGORI_RESMI.includes(kat)) {
+                        rekap[kat] = (rekap[kat] || 0) + 1; 
+                    }
+                });
             });
 
             let html = "";
